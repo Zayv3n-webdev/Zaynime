@@ -560,3 +560,12 @@ const App = (() => {
 })();
 
 document.addEventListener('DOMContentLoaded', App.init);
+
+window.addEventListener("DOMContentLoaded", () => {
+
+  API.home();
+  API.ongoing();
+  API.completed();
+  API.movies();
+
+});
