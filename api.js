@@ -1,122 +1,109 @@
 /* ============================================================
-   api.js — Zaynime API Layer
-   Base : https://www.sankavollerei.com/anime/otakudesu
+   api.js — Zaynime API Layer  v2
+   Base    : https://www.sankavollerei.com/anime/otakudesu
+   Fix     : CORS proxy chain + correct response shape parsing
    ============================================================ */
 
 const API = (() => {
+
   const BASE = 'https://www.sankavollerei.com/anime/otakudesu';
 
-  /* ---------- low-level fetch ---------- */
+  const PROXIES = [
+    {
+      wrap : (url) => `https://corsproxy.io/?url=${encodeURIComponent(url)}`,
+      parse: (res)  => res.json(),
+    },
+    {
+      wrap : (url) => `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
+      parse: async (res) => {
+        const j = await res.json();
+        return JSON.parse(j.contents);
+      },
+    },
+    {
+      wrap : (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`,
+      parse: (res)  => res.json(),
+    },
+  ];
+
   async function get(path) {
+    const target = BASE + path;
+
+    // 1. Coba direct dulu
     try {
-      const url = BASE + path;
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: { 'Accept': 'application/json' }
+      const r = await fetch(target, {
+        headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(5000),
       });
-
-      if (!res.ok) {
-        console.warn(`[API] ${res.status} — ${url}`);
-        return null;
+      if (r.ok) {
+        const j = await r.json();
+        console.log('[API] direct OK:', path);
+        return j;
       }
+    } catch (_) {}
 
-      const json = await res.json();
-      return json;
-    } catch (err) {
-      // Typical culprits: CORS, network, DNS
-      if (err.name === 'TypeError' && err.message.includes('Failed to fetch')) {
-        console.error('[API] CORS / Network error:', err.message);
-      } else {
-        console.error('[API] Error:', err.message);
+    // 2. Fallback ke setiap CORS proxy
+    for (const proxy of PROXIES) {
+      try {
+        const proxyUrl = proxy.wrap(target);
+        const r = await fetch(proxyUrl, { signal: AbortSignal.timeout(12000) });
+        if (!r.ok) continue;
+        const json = await proxy.parse(r);
+        if (json) {
+          console.log('[API] proxy OK:', path);
+          return json;
+        }
+      } catch (e) {
+        console.warn('[API] proxy failed:', e.message);
       }
-      return null;
     }
+
+    console.error('[API] semua gagal:', path);
+    return null;
   }
 
-  /* ---------- normalise response ---------- */
-  // API returns either { status:'Ok', data:[...] } or { status:'Ok', data:{...} }
+  /* Normalise list */
   function list(raw) {
     if (!raw) return [];
     const d = raw.data ?? raw.result ?? raw;
     if (Array.isArray(d)) return d;
+    if (typeof d !== 'object' || d === null) return [];
 
-    // Home endpoint nests multiple arrays
-    for (const key of ['ongoing', 'completed', 'latest', 'popular', 'latestAnime',
-                        'ongoingAnime', 'completedAnime', 'sliderAnime', 'popularAnime']) {
-      if (Array.isArray(d[key])) return d[key];
+    const KEYS = [
+      'animeList','genreList','scheduleList','episodeList',
+      'latestAnime','ongoingAnime','completedAnime','popularAnime','sliderAnime',
+      'ongoing','completed','popular','latest','result',
+    ];
+    for (const key of KEYS) {
+      if (Array.isArray(d[key]) && d[key].length) return d[key];
     }
-    // Fallback: first array found
-    if (typeof d === 'object') {
-      for (const v of Object.values(d)) {
-        if (Array.isArray(v) && v.length) return v;
-      }
+    for (const v of Object.values(d)) {
+      if (Array.isArray(v) && v.length) return v;
     }
     return [];
   }
 
+  /* Normalise detail */
   function detail(raw) {
     if (!raw) return null;
-    return raw.data ?? raw.result ?? raw;
+    const d = raw.data ?? raw.result ?? raw;
+    if (d && typeof d === 'object' && !Array.isArray(d)) {
+      if (d.animeDetail)   return d.animeDetail;
+      if (d.episodeDetail) return d.episodeDetail;
+    }
+    return d;
   }
 
-  /* ---------- public endpoints ---------- */
   return {
-    /* Home — returns raw so caller can grab multiple sections */
-    async home() {
-      return get('/home');
-    },
-
-    /* Ongoing list  (page optional) */
-    async ongoing(page = 1) {
-      const r = await get(`/ongoing?page=${page}`);
-      return list(r);
-    },
-
-    /* Completed list */
-    async completed(page = 1) {
-      const r = await get(`/completed?page=${page}`);
-      return list(r);
-    },
-
-    /* Movie list */
-    async movies(page = 1) {
-      const r = await get(`/movies?page=${page}`);
-      return list(r);
-    },
-
-    /* Schedule */
-    async schedule() {
-      return get('/schedule');
-    },
-
-    /* Search */
-    async search(q) {
-      const r = await get(`/search?q=${encodeURIComponent(q)}`);
-      return list(r);
-    },
-
-    /* All genres */
-    async genres() {
-      const r = await get('/genres');
-      return list(r);
-    },
-
-    /* Anime by genre slug */
-    async byGenre(slug, page = 1) {
-      const r = await get(`/genres/${slug}?page=${page}`);
-      return list(r);
-    },
-
-    /* Anime detail — slug comes from card data */
-    async animeDetail(slug) {
-      const r = await get(`/anime/${slug}`);
-      return detail(r);
-    },
-
-    /* Episode detail */
-    async episode(slug) {
-      const r = await get(`/episode/${slug}`);
-      return detail(r);
-    }
+    async home()                   { return get('/home'); },
+    async ongoing(page = 1)        { return list(await get(`/ongoing?page=${page}`)); },
+    async completed(page = 1)      { return list(await get(`/completed?page=${page}`)); },
+    async movies(page = 1)         { return list(await get(`/movies?page=${page}`)); },
+    async schedule()               { return get('/schedule'); },
+    async search(q)                { return list(await get(`/search?q=${encodeURIComponent(q)}`)); },
+    async genres()                 { return list(await get('/genres')); },
+    async byGenre(slug, page = 1)  { return list(await get(`/genres/${slug}?page=${page}`)); },
+    async animeDetail(slug)        { return detail(await get(`/anime/${slug}`)); },
+    async episode(slug)            { return detail(await get(`/episode/${slug}`)); },
   };
 })();

@@ -1,40 +1,39 @@
 /* ============================================================
-   app.js — Zaynime Main Application
+   app.js — Zaynime Main Application  v2
    ============================================================ */
 
 const App = (() => {
 
-  /* ---- state ---- */
-  let currentPage     = 'home';
-  let ongoingPage     = 1;
-  let completedPage   = 1;
-  let moviesPage      = 1;
-  let genrePage       = 1;
-  let currentGenre    = null;
-  let searchTimer     = null;
+  let currentPage   = 'home';
+  let ongoingPage   = 1;
+  let completedPage = 1;
+  let moviesPage    = 1;
+  let genrePage     = 1;
+  let currentGenre  = null;
+  let searchTimer   = null;
 
   const hofData = [
-    { name:'Aldi M.',    amount:50000, msg:'Terus semangat!' },
-    { name:'Anonim',     amount:15000, msg:'Keep it up dev!' },
-    { name:'Rizky F.',   amount:25000, msg:'Mantap websitenya' },
-    { name:'Siti N.',    amount:10000, msg:'❤️' },
-    { name:'Joko W.',    amount:50000, msg:'Sukses terus!' },
+    { name:'Aldi M.',   amount:50000, msg:'Terus semangat!' },
+    { name:'Anonim',    amount:15000, msg:'Keep it up dev!' },
+    { name:'Rizky F.',  amount:25000, msg:'Mantap websitenya' },
+    { name:'Siti N.',   amount:10000, msg:'❤️' },
+    { name:'Joko W.',   amount:50000, msg:'Sukses terus!' },
   ];
 
-  /* ===========================================================
-     PAGE NAVIGATION
-     =========================================================== */
+  /* ============================================================
+     NAVIGATION
+  ============================================================ */
   function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById(`page-${name}`).classList.add('active');
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.page === name));
+    document.querySelectorAll('.nav-links a').forEach(a =>
+      a.classList.toggle('active', a.dataset.page === name)
+    );
     currentPage = name;
 
-    // Scroll to just below hero (or top for non-home)
     const heroH = document.getElementById('hero').offsetHeight;
     window.scrollTo({ top: name === 'home' ? 0 : heroH - 62, behavior: 'smooth' });
 
-    // Lazy-load content
     if (name === 'ongoing'   && !document.getElementById('ongoing-grid').dataset.loaded)   loadOngoing(true);
     if (name === 'completed' && !document.getElementById('completed-grid').dataset.loaded) loadCompleted(true);
     if (name === 'movies'    && !document.getElementById('movies-grid').dataset.loaded)    loadMovies(true);
@@ -43,9 +42,9 @@ const App = (() => {
     if (name === 'donate')                                                                   renderHoF();
   }
 
-  /* ===========================================================
+  /* ============================================================
      HOME
-     =========================================================== */
+  ============================================================ */
   async function loadHome() {
     const trendRow = document.getElementById('trending-row');
     const ongoRow  = document.getElementById('home-ongoing-row');
@@ -61,41 +60,50 @@ const App = (() => {
       API.completed(1),
     ]);
 
-    // Trending — use the best list from home endpoint
+    /* Trending dari home endpoint */
     if (homeRaw) {
-      const d  = homeRaw.data ?? homeRaw.result ?? homeRaw;
-      const trending = d?.popular ?? d?.latestAnime ?? d?.popularAnime
-                    ?? d?.ongoing  ?? d?.slider
-                    ?? (Array.isArray(d) ? d : []);
-      if (trending.length) {
+      const d = homeRaw.data ?? homeRaw.result ?? homeRaw;
+      // Coba semua kemungkinan key untuk trending/popular
+      const trending =
+        (d && (d.popularAnime || d.latestAnime || d.ongoingAnime ||
+               d.sliderAnime  || d.popular     || d.latest       || d.ongoing)) ||
+        (Array.isArray(d) ? d : null) ||
+        ongoingItems; // fallback ke ongoing kalau home tidak ada data
+
+      if (trending && trending.length) {
         UI.renderGrid(trendRow, trending.slice(0, 14), true);
       } else {
         trendRow.innerHTML = UI.errorBlock('Data trending tidak tersedia.');
       }
     } else {
-      trendRow.innerHTML = UI.errorBlock('Gagal memuat data dari API. Periksa koneksi & buka melalui web server.');
+      trendRow.innerHTML = UI.errorBlock(
+        'Gagal memuat dari API.<br><small style="font-size:11px">Kemungkinan CORS proxy sibuk, tunggu sebentar & refresh.</small>',
+        'App.retryHome'
+      );
     }
 
-    // Ongoing strip
+    /* Ongoing strip */
     if (ongoingItems.length) {
       UI.renderGrid(ongoRow, ongoingItems.slice(0, 14), true);
     } else {
-      ongoRow.innerHTML = UI.errorBlock('Data ongoing tidak tersedia.');
+      ongoRow.innerHTML = UI.errorBlock('Data ongoing tidak tersedia.', 'App.retryHome');
     }
 
-    // Completed strip
+    /* Completed strip */
     if (completedItems.length) {
       UI.renderGrid(compRow, completedItems.slice(0, 14), true);
     } else {
-      compRow.innerHTML = UI.errorBlock('Data completed tidak tersedia.');
+      compRow.innerHTML = UI.errorBlock('Data completed tidak tersedia.', 'App.retryHome');
     }
   }
 
-  /* ===========================================================
+  function retryHome() { loadHome(); }
+
+  /* ============================================================
      ONGOING
-     =========================================================== */
+  ============================================================ */
   async function loadOngoing(fresh = false) {
-    if (fresh) { ongoingPage = 1; }
+    if (fresh) ongoingPage = 1;
     const grid = document.getElementById('ongoing-grid');
     if (fresh) { grid.innerHTML = UI.skeletons(16); grid.removeAttribute('data-loaded'); }
 
@@ -110,13 +118,12 @@ const App = (() => {
       grid.innerHTML = UI.errorBlock('Data ongoing tidak ditemukan.', 'App.reloadOngoing');
     }
   }
-
   function reloadOngoing() { loadOngoing(true); }
-  function moreOngoing()   { ongoingPage++; loadOngoing(); }
+  function moreOngoing()   { ongoingPage++;  loadOngoing(); }
 
-  /* ===========================================================
+  /* ============================================================
      COMPLETED
-     =========================================================== */
+  ============================================================ */
   async function loadCompleted(fresh = false) {
     if (fresh) completedPage = 1;
     const grid = document.getElementById('completed-grid');
@@ -136,9 +143,9 @@ const App = (() => {
   function reloadCompleted() { loadCompleted(true); }
   function moreCompleted()   { completedPage++; loadCompleted(); }
 
-  /* ===========================================================
+  /* ============================================================
      MOVIES
-     =========================================================== */
+  ============================================================ */
   async function loadMovies(fresh = false) {
     if (fresh) moviesPage = 1;
     const grid = document.getElementById('movies-grid');
@@ -158,14 +165,32 @@ const App = (() => {
   function reloadMovies() { loadMovies(true); }
   function moreMovies()   { moviesPage++; loadMovies(); }
 
-  /* ===========================================================
+  /* ============================================================
      GENRES
-     =========================================================== */
+  ============================================================ */
   const FALLBACK_GENRES = [
-    'Action','Adventure','Comedy','Drama','Ecchi','Fantasy',
-    'Horror','Josei','Magic','Mecha','Military','Mystery',
-    'Psychological','Romance','School','Sci-Fi','Seinen','Shounen',
-    'Slice of Life','Sports','Super Power','Supernatural','Thriller'
+    {name:'Action',       genreId:'action'},
+    {name:'Adventure',    genreId:'adventure'},
+    {name:'Comedy',       genreId:'comedy'},
+    {name:'Drama',        genreId:'drama'},
+    {name:'Ecchi',        genreId:'ecchi'},
+    {name:'Fantasy',      genreId:'fantasy'},
+    {name:'Horror',       genreId:'horror'},
+    {name:'Magic',        genreId:'magic'},
+    {name:'Mecha',        genreId:'mecha'},
+    {name:'Military',     genreId:'military'},
+    {name:'Mystery',      genreId:'mystery'},
+    {name:'Psychological',genreId:'psychological'},
+    {name:'Romance',      genreId:'romance'},
+    {name:'School',       genreId:'school'},
+    {name:'Sci-Fi',       genreId:'sci-fi'},
+    {name:'Seinen',       genreId:'seinen'},
+    {name:'Shounen',      genreId:'shounen'},
+    {name:'Slice of Life',genreId:'slice-of-life'},
+    {name:'Sports',       genreId:'sports'},
+    {name:'Super Power',  genreId:'super-power'},
+    {name:'Supernatural', genreId:'supernatural'},
+    {name:'Thriller',     genreId:'thriller'},
   ];
 
   async function loadGenres() {
@@ -173,14 +198,12 @@ const App = (() => {
     pillsEl.innerHTML = '<span style="color:var(--text2)">Memuat genre...</span>';
     pillsEl.dataset.loaded = '1';
 
-    const data = await API.genres();
-
-    let genres = data;
-    if (!genres.length) genres = FALLBACK_GENRES.map(n => ({ name: n, genreId: n.toLowerCase() }));
+    let genres = await API.genres();
+    if (!genres || !genres.length) genres = FALLBACK_GENRES;
 
     pillsEl.innerHTML = genres.map(g => {
       const name = g.name || g.genreName || g.genre || (typeof g === 'string' ? g : '?');
-      const slug = g.genreId || g.slug || g.endpoint || (typeof g === 'string' ? g.toLowerCase() : name.toLowerCase());
+      const slug = g.genreId || g.slug || g.endpoint || (typeof g === 'string' ? g.toLowerCase() : name.toLowerCase().replace(/\s+/g,'-'));
       return `<button class="gpill" data-slug="${slug}" data-name="${name}" onclick="App.filterGenre(this)">${name}</button>`;
     }).join('');
   }
@@ -188,7 +211,6 @@ const App = (() => {
   async function filterGenre(el) {
     document.querySelectorAll('.gpill').forEach(p => p.classList.remove('active'));
     el.classList.add('active');
-
     const slug = el.dataset.slug;
     const name = el.dataset.name;
     currentGenre = slug;
@@ -206,17 +228,17 @@ const App = (() => {
     }
   }
 
-  /* ===========================================================
+  /* ============================================================
      SCHEDULE
-     =========================================================== */
+  ============================================================ */
   async function loadSchedule() {
     const wrap = document.getElementById('schedule-wrap');
     wrap.dataset.loaded = '1';
-    wrap.innerHTML = '<p style="color:var(--text2)">Memuat jadwal...</p>';
+    wrap.innerHTML = '<p style="color:var(--text2);padding:2rem">Memuat jadwal...</p>';
 
-    const data = await API.schedule();
-    const days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
-    const todayIdx = (new Date().getDay() + 6) % 7; // Mon=0
+    const data  = await API.schedule();
+    const days  = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+    const todayIdx = (new Date().getDay() + 6) % 7;
 
     let byDay = {};
     if (data) {
@@ -224,7 +246,8 @@ const App = (() => {
       if (Array.isArray(d)) {
         d.forEach(item => {
           const day = item.day || item.hari || '';
-          if (day) { if (!byDay[day]) byDay[day] = []; byDay[day].push(item); }
+          if (!byDay[day]) byDay[day] = [];
+          byDay[day].push(item);
         });
       } else if (typeof d === 'object') {
         byDay = d;
@@ -232,11 +255,11 @@ const App = (() => {
     }
 
     wrap.innerHTML = days.map((day, i) => {
-      const isToday  = i === todayIdx;
-      const animes   = byDay[day] || byDay[day.toLowerCase()] || [];
+      const isToday   = i === todayIdx;
+      const animes    = byDay[day] || byDay[day.toLowerCase()] || [];
       const itemsHtml = animes.slice(0, 10).map(a => {
         const title = a.title || a.judul || a.name || 'Unknown';
-        const time  = a.time || a.jam || '';
+        const time  = a.time  || a.jam   || '';
         const slug  = a.animeId || a.slug || '';
         return `
           <div class="sched-item" onclick="App.openDetail('${slug}','${encodeURIComponent(title)}')">
@@ -254,25 +277,23 @@ const App = (() => {
     }).join('');
   }
 
-  /* ===========================================================
+  /* ============================================================
      SEARCH
-     =========================================================== */
+  ============================================================ */
   function openSearch() {
     document.getElementById('search-overlay').classList.add('open');
     setTimeout(() => document.getElementById('srch-input').focus(), 80);
   }
-
   function closeSearch() {
     document.getElementById('search-overlay').classList.remove('open');
   }
-
   function onSearchInput() {
     clearTimeout(searchTimer);
     searchTimer = setTimeout(doSearch, 480);
   }
 
   async function doSearch() {
-    const q = document.getElementById('srch-input').value.trim();
+    const q         = document.getElementById('srch-input').value.trim();
     const resultsEl = document.getElementById('srch-results');
     if (!q) { resultsEl.innerHTML = ''; return; }
 
@@ -291,9 +312,9 @@ const App = (() => {
     }
   }
 
-  /* ===========================================================
-     ANIME DETAIL MODAL
-     =========================================================== */
+  /* ============================================================
+     DETAIL MODAL
+  ============================================================ */
   async function openDetail(slug, titleEncoded) {
     if (!slug) { UI.toast('Data anime tidak ditemukan', 'error'); return; }
     const title = decodeURIComponent(titleEncoded || '');
@@ -315,21 +336,23 @@ const App = (() => {
       content.innerHTML = `
         <div style="text-align:center;padding:5rem;color:var(--text2)">
           <div style="font-size:2.5rem;margin-bottom:.8rem">😢</div>
-          <p>Gagal memuat detail. Pastikan web server aktif.</p>
+          <p>Gagal memuat detail anime.</p>
           <button class="btn btn-ghost btn-sm" onclick="App.closeDetail()" style="margin-top:1rem">Tutup</button>
         </div>`;
       return;
     }
 
-    const animeTitle = data.title  || data.judul || title;
-    const img        = data.poster || data.thumbnail || data.thumb || UI.IMG_FB;
-    const synopsis   = data.synopsis || data.sinopsis || data.description || 'Tidak ada sinopsis.';
-    const status     = data.animeStatus || data.status || '';
-    const type       = data.type   || data.tipe || 'TV';
-    const studio     = data.studio || '';
-    const season     = data.season || '';
-    const genres     = data.genreList  || data.genres || data.genre || [];
-    const episodes   = data.episodeList || data.episodes || data.episode_list || [];
+    /* Field names dari Sankavollerei */
+    const animeTitle  = data.title         || data.judul || title;
+    const img         = data.poster        || data.thumbnail || data.thumb || UI.IMG_FB;
+    const synopsis    = data.synopsis      || data.sinopsis || data.description || 'Tidak ada sinopsis.';
+    const status      = data.animeStatus   || data.status || '';
+    const type        = data.type          || data.tipe || 'TV';
+    const studio      = data.studio        || '';
+    const season      = data.season        || '';
+    const genres      = data.genreList     || data.genres || data.genre || [];
+    /* episodeList dari Sankavollerei: [{episodeNum, episodeId, ...}, ...] */
+    const episodes    = data.episodeList   || data.episodes || data.episode_list || [];
 
     const genreTags = (Array.isArray(genres) ? genres : []).map(g =>
       `<span class="dtag">${g.genreName || g.name || g.genre || g}</span>`
@@ -340,44 +363,47 @@ const App = (() => {
           const epSlug  = ep.episodeId || ep.slug || ep.endpoint || '';
           const epLabel = ep.episodeNum != null
             ? `Episode ${ep.episodeNum}`
-            : (ep.episode || ep.eps || ep.name || ep.title || 'Episode');
-          return `<button class="ep-btn" data-ep-slug="${epSlug}" data-ep-title="${encodeURIComponent(animeTitle + ' — ' + epLabel)}">${epLabel}</button>`;
+            : (ep.episode || ep.eps || ep.name || 'Episode');
+          return `<button class="ep-btn"
+            data-ep-slug="${epSlug}"
+            data-ep-title="${encodeURIComponent(animeTitle + ' — ' + epLabel)}"
+            >${epLabel}</button>`;
         }).join('')
       : '<p style="color:var(--text2);font-size:13px">Episode belum tersedia.</p>';
+
+    const isOngoing = status.toLowerCase().includes('ongoing');
 
     content.innerHTML = `
       <div class="detail-hero">
         <div class="detail-poster">
-          <img src="${img}" alt="${animeTitle}" onerror="this.src='${UI.IMG_FB}'">
+          <img src="${img}" alt="${animeTitle.replace(/"/g,'&quot;')}"
+               onerror="this.src='${UI.IMG_FB}'">
         </div>
         <div class="detail-info">
           <h1>${animeTitle}</h1>
           <div class="detail-tags">
-            ${status ? `<span class="dtag ${status.toLowerCase().includes('ongoing') ? 'green' : 'cyan'}">${status}</span>` : ''}
-            ${type   ? `<span class="dtag">${type}</span>`   : ''}
-            ${studio ? `<span class="dtag">${studio}</span>` : ''}
-            ${season ? `<span class="dtag">${season}</span>` : ''}
+            ${status   ? `<span class="dtag ${isOngoing?'green':'cyan'}">${status}</span>` : ''}
+            ${type     ? `<span class="dtag">${type}</span>`   : ''}
+            ${studio   ? `<span class="dtag">${studio}</span>` : ''}
+            ${season   ? `<span class="dtag">${season}</span>` : ''}
             ${genreTags}
           </div>
           <p class="detail-synopsis">${synopsis}</p>
           <div class="detail-actions">
-            ${episodes.length
-              ? `<button class="btn btn-accent" id="watch-first-btn">▶ Tonton</button>`
-              : ''}
+            ${episodes.length ? `<button class="btn btn-accent" id="watch-first-btn">▶ Tonton</button>` : ''}
             <button class="btn btn-ghost" id="dl-all-btn">⬇ Download</button>
           </div>
         </div>
       </div>
       <div class="eps-section">
         <div class="eps-title">
-          📺 Daftar Episode <span class="eps-count">(${episodes.length} eps)</span>
+          📺 Daftar Episode
+          <span class="eps-count">(${episodes.length} eps)</span>
         </div>
-        <div class="eps-grid" id="eps-grid">
-          ${episodesHtml}
-        </div>
+        <div class="eps-grid" id="eps-grid">${episodesHtml}</div>
       </div>`;
 
-    // Bind episode buttons
+    /* Bind episode buttons */
     content.querySelectorAll('.ep-btn').forEach(btn => {
       btn.onclick = () => {
         content.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
@@ -386,20 +412,17 @@ const App = (() => {
       };
     });
 
-    // Watch first episode
+    /* Watch button (last episode = latest) */
     const watchBtn = document.getElementById('watch-first-btn');
     if (watchBtn && episodes.length) {
-      const last = episodes[episodes.length - 1];
-      const lastSlug  = last.episodeId || last.slug || last.endpoint || '';
-      const lastLabel = last.episodeNum != null ? `Episode ${last.episodeNum}` : 'Episode';
-      watchBtn.onclick = () => Player.open(lastSlug, `${animeTitle} — ${lastLabel}`);
+      const latest = episodes[episodes.length - 1];
+      watchBtn.onclick = () => Player.open(
+        latest.episodeId || latest.slug || '',
+        `${animeTitle} — Episode ${latest.episodeNum || ''}`
+      );
     }
 
-    // Download
-    const dlBtn = document.getElementById('dl-all-btn');
-    if (dlBtn) {
-      dlBtn.onclick = () => Download.open(animeTitle, []);
-    }
+    document.getElementById('dl-all-btn').onclick = () => Download.open(animeTitle, []);
   }
 
   function closeDetail() {
@@ -407,159 +430,133 @@ const App = (() => {
     document.body.style.overflow = '';
   }
 
-  /* ===========================================================
+  /* ============================================================
      DONATE
-     =========================================================== */
+  ============================================================ */
   function openDonate(amount) {
-    UI.toast(`Terima kasih! Mengarahkan ke halaman donasi Rp ${parseInt(amount).toLocaleString('id')}…`, 'info');
-    // window.open('https://sociabuzz.com/sankavollerei/tribe', '_blank');
+    UI.toast(`Mengarahkan ke donasi Rp ${parseInt(amount).toLocaleString('id')}…`, 'info');
   }
 
   function submitDonate() {
-    const name   = document.getElementById('dn-name').value.trim()   || 'Anonim';
+    const name   = document.getElementById('dn-name').value.trim() || 'Anonim';
     const amount = parseInt(document.getElementById('dn-amount').value) || 0;
     const msg    = document.getElementById('dn-msg').value.trim();
-
-    if (amount < 1000) { UI.toast('Masukkan nominal minimal Rp 1.000', 'error'); return; }
-
+    if (amount < 1000) { UI.toast('Minimal Rp 1.000', 'error'); return; }
     hofData.unshift({ name, amount, msg });
     renderHoF();
-    UI.toast(`Terima kasih ${name}! Donasi Rp ${amount.toLocaleString('id')} diterima ❤️`, 'success');
-    document.getElementById('dn-name').value = '';
+    UI.toast(`Terima kasih ${name}! ❤️`, 'success');
+    document.getElementById('dn-name').value   = '';
     document.getElementById('dn-amount').value = '';
-    document.getElementById('dn-msg').value = '';
+    document.getElementById('dn-msg').value    = '';
   }
 
   function renderHoF() {
-    const el = document.getElementById('hof-grid');
-    const medals = ['🥇','🥈','🥉'];
+    const el      = document.getElementById('hof-grid');
+    const medals  = ['🥇','🥈','🥉'];
     el.innerHTML = hofData.map((d, i) => `
       <div class="hof-card">
-        <div style="font-size:1.5rem;margin-bottom:.3rem">${medals[i] || '⭐'}</div>
+        <div style="font-size:1.4rem;margin-bottom:.3rem">${medals[i] || '⭐'}</div>
         <div style="font-weight:700;font-size:13px;margin-bottom:2px">${d.name}</div>
         <div class="hof-amt">Rp ${d.amount.toLocaleString('id')}</div>
         ${d.msg ? `<div class="hof-msg">"${d.msg}"</div>` : ''}
       </div>`).join('');
   }
 
-  /* ===========================================================
-     BUG REPORT
-     =========================================================== */
+  /* ============================================================
+     BUG / FEATURE
+  ============================================================ */
   function submitBug() {
-    const type = document.getElementById('bug-type').value;
-    const desc = document.getElementById('bug-desc').value.trim();
-    if (!type) { UI.toast('Pilih jenis bug terlebih dahulu', 'error'); return; }
-    if (!desc) { UI.toast('Deskripsikan bug yang ditemukan', 'error'); return; }
-    UI.toast('Laporan berhasil dikirim! Terima kasih 🙏', 'success');
-    document.getElementById('bug-type').value = '';
-    document.getElementById('bug-anime').value = '';
-    document.getElementById('bug-desc').value = '';
-    document.getElementById('bug-email').value = '';
+    if (!document.getElementById('bug-type').value)            { UI.toast('Pilih jenis bug', 'error'); return; }
+    if (!document.getElementById('bug-desc').value.trim())     { UI.toast('Tulis deskripsi bug', 'error'); return; }
+    UI.toast('Laporan terkirim! Terima kasih 🙏', 'success');
+    ['bug-type','bug-anime','bug-desc','bug-email'].forEach(id => document.getElementById(id).value = '');
   }
 
   function submitFeature() {
-    const name = document.getElementById('feat-name').value.trim();
-    const desc = document.getElementById('feat-desc').value.trim();
-    if (!name) { UI.toast('Masukkan nama fitur', 'error'); return; }
-    if (!desc) { UI.toast('Jelaskan fiturnya dulu', 'error'); return; }
-    UI.toast('Ide fitur dikirim! Kami akan mempertimbangkannya ✨', 'success');
-    document.getElementById('feat-name').value = '';
-    document.getElementById('feat-desc').value = '';
+    if (!document.getElementById('feat-name').value.trim()) { UI.toast('Masukkan nama fitur', 'error'); return; }
+    if (!document.getElementById('feat-desc').value.trim()) { UI.toast('Jelaskan fiturnya', 'error'); return; }
+    UI.toast('Ide fitur dikirim! ✨', 'success');
+    ['feat-name','feat-desc'].forEach(id => document.getElementById(id).value = '');
   }
 
-  /* ===========================================================
-     HERO CANVAS ANIMATION
-     =========================================================== */
+  /* ============================================================
+     HERO CANVAS
+  ============================================================ */
   function initHeroCanvas() {
     const canvas = document.getElementById('hero-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-
-    function resize() {
-      canvas.width  = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    }
+    function resize() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
     resize();
     window.addEventListener('resize', resize);
 
     let frame = 0;
     const circles = [
-      { cx: .25, cy: .45, r: .28, color: 'rgba(233,69,96,' },
-      { cx: .75, cy: .55, r: .35, color: 'rgba(168,85,247,' },
-      { cx: .50, cy: .25, r: .18, color: 'rgba(34,211,238,' },
+      { cx:.25, cy:.45, r:.28, c:'rgba(233,69,96,' },
+      { cx:.75, cy:.55, r:.35, c:'rgba(168,85,247,' },
+      { cx:.50, cy:.22, r:.18, c:'rgba(34,211,238,' },
     ];
 
-    ;(function draw() {
+    (function draw() {
       const w = canvas.width, h = canvas.height;
       ctx.clearRect(0, 0, w, h);
-
       circles.forEach((c, i) => {
-        const x = (c.cx + Math.sin(frame * .009 + i * 2.1) * .06) * w;
-        const y = (c.cy + Math.cos(frame * .007 + i) * .04) * h;
+        const x = (c.cx + Math.sin(frame*.009 + i*2.1)*.06) * w;
+        const y = (c.cy + Math.cos(frame*.007 + i)    *.04) * h;
         const r = c.r * Math.min(w, h);
         const g = ctx.createRadialGradient(x, y, 0, x, y, r);
-        g.addColorStop(0, c.color + '.22)');
-        g.addColorStop(1, c.color + '0)');
+        g.addColorStop(0, c.c + '.2)');
+        g.addColorStop(1, c.c + '0)');
         ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
       });
-
-      // Stars
       for (let i = 0; i < 60; i++) {
-        const sx = (i * 137.5) % w;
-        const sy = (i * 93.7)  % h;
-        const a  = (Math.sin(frame * .04 + i) + 1) * .4;
+        const a = (Math.sin(frame*.04 + i) + 1) * .35;
         ctx.fillStyle = `rgba(255,255,255,${a})`;
-        ctx.beginPath(); ctx.arc(sx, sy, 1, 0, Math.PI * 2); ctx.fill();
+        ctx.beginPath(); ctx.arc((i*137.5)%w, (i*93.7)%h, 1, 0, Math.PI*2); ctx.fill();
       }
       frame++;
       requestAnimationFrame(draw);
     })();
   }
 
-  /* ===========================================================
+  /* ============================================================
      INIT
-     =========================================================== */
+  ============================================================ */
   function init() {
     initHeroCanvas();
     loadHome();
 
-    // Back to top
     window.addEventListener('scroll', () => {
       document.getElementById('back-top').classList.toggle('show', window.scrollY > 480);
     });
 
-    // Search input events
-    document.getElementById('srch-input').addEventListener('input', onSearchInput);
-    document.getElementById('srch-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') doSearch();
+    const srchInput = document.getElementById('srch-input');
+    srchInput.addEventListener('input',   onSearchInput);
+    srchInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter')  doSearch();
       if (e.key === 'Escape') closeSearch();
     });
 
-    // Global escape
     document.addEventListener('keydown', e => {
       if (e.key === 'Escape') {
-        closeSearch();
-        closeDetail();
-        Player.close();
-        Download.close();
+        closeSearch(); closeDetail(); Player.close(); Download.close();
       }
     });
   }
 
-  /* public surface */
   return {
-    showPage, openDetail, closeDetail,
+    showPage, retryHome,
+    openDetail, closeDetail,
     openSearch, closeSearch, doSearch, onSearchInput,
     filterGenre,
-    moreOngoing, reloadOngoing,
+    moreOngoing,   reloadOngoing,
     moreCompleted, reloadCompleted,
-    moreMovies, reloadMovies,
+    moreMovies,    reloadMovies,
     openDonate, submitDonate,
     submitBug, submitFeature,
     init,
   };
 })();
 
-/* Boot when DOM ready */
 document.addEventListener('DOMContentLoaded', App.init);
