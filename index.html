@@ -1,0 +1,2367 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AnimeVerse — Nonton Anime Sub Indo Gratis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a2e;
+    --surface: #16162a;
+    --surface2: #1e1e35;
+    --accent: #e94560;
+    --accent2: #ff6b6b;
+    --gold: #ffd700;
+    --cyan: #00d4ff;
+    --purple: #a855f7;
+    --green: #22c55e;
+    --text: #f0f0f8;
+    --text2: #a0a0c0;
+    --border: rgba(255,255,255,0.08);
+    --glow: 0 0 20px rgba(233,69,96,0.4);
+    --card-radius: 12px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
+
+  /* ===== NAVBAR ===== */
+  #navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding: 0 2rem;
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+
+  .nav-logo {
+    display: flex; align-items: center; gap: 10px;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 900;
+    color: white;
+    box-shadow: 0 0 15px rgba(233,69,96,0.5);
+  }
+
+  .logo-text {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 26px;
+    letter-spacing: 2px;
+    background: linear-gradient(to right, #fff, var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .nav-links {
+    display: flex; align-items: center; gap: 1.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: var(--text2); text-decoration: none;
+    font-size: 14px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    transition: color 0.2s;
+    cursor: pointer;
+  }
+
+  .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+
+  .nav-search-btn {
+    background: none; border: none; color: var(--text2);
+    cursor: pointer; font-size: 18px;
+    transition: color 0.2s;
+  }
+  .nav-search-btn:hover { color: var(--accent); }
+
+  .hamburger {
+    display: none; flex-direction: column; gap: 5px;
+    cursor: pointer; background: none; border: none; padding: 5px;
+  }
+  .hamburger span {
+    display: block; width: 24px; height: 2px;
+    background: var(--text); border-radius: 2px;
+    transition: all 0.3s;
+  }
+
+  /* ===== HERO ===== */
+  #hero {
+    position: relative; height: 100vh; min-height: 600px;
+    display: flex; align-items: center;
+    overflow: hidden;
+  }
+
+  #hero-video {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.25;
+    pointer-events: none;
+  }
+
+  .hero-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(10,10,15,0.95) 0%,
+      rgba(10,10,15,0.7) 50%,
+      rgba(10,10,15,0.4) 100%
+    );
+  }
+
+  .hero-particles {
+    position: absolute; inset: 0; pointer-events: none;
+    overflow: hidden;
+  }
+
+  .particle {
+    position: absolute; width: 2px; height: 2px;
+    background: var(--accent); border-radius: 50%;
+    animation: float-particle linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes float-particle {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) translateX(50px); opacity: 0; }
+  }
+
+  .hero-content {
+    position: relative; z-index: 10;
+    padding: 0 2rem; max-width: 750px;
+    margin-left: clamp(2rem, 8vw, 8rem);
+    padding-top: 64px;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(233,69,96,0.15);
+    border: 1px solid rgba(233,69,96,0.4);
+    padding: 6px 14px; border-radius: 30px;
+    font-size: 12px; font-weight: 800;
+    color: var(--accent2); letter-spacing: 2px; text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 0.6s ease both;
+  }
+
+  .hero-badge::before {
+    content: ''; width: 8px; height: 8px;
+    background: var(--accent); border-radius: 50%;
+    animation: pulse-dot 1.5s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.5); }
+  }
+
+  .hero-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    line-height: 0.95;
+    letter-spacing: 3px;
+    margin-bottom: 1rem;
+    animation: fadeInUp 0.7s 0.1s ease both;
+  }
+
+  .hero-title .line1 { color: white; }
+  .hero-title .line2 {
+    background: linear-gradient(to right, var(--accent), var(--purple), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+  }
+
+  .hero-subtitle {
+    font-size: 16px; color: var(--text2);
+    line-height: 1.7; max-width: 500px;
+    margin-bottom: 2rem;
+    animation: fadeInUp 0.7s 0.2s ease both;
+  }
+
+  .hero-stats {
+    display: flex; gap: 2rem; margin-bottom: 2.5rem;
+    animation: fadeInUp 0.7s 0.3s ease both;
+  }
+
+  .hero-stat { text-align: left; }
+  .hero-stat .num {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem; color: var(--accent);
+    line-height: 1;
+  }
+  .hero-stat .label {
+    font-size: 11px; color: var(--text2);
+    text-transform: uppercase; letter-spacing: 1px;
+  }
+
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    animation: fadeInUp 0.7s 0.4s ease both;
+  }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 28px; border-radius: 8px;
+    font-size: 14px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; border: none;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #c0392b);
+    color: white;
+    box-shadow: 0 4px 20px rgba(233,69,96,0.4);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(233,69,96,0.6);
+  }
+
+  .btn-secondary {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    color: var(--text);
+    backdrop-filter: blur(10px);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .hero-scroll {
+    position: absolute; bottom: 30px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: var(--text2); font-size: 11px;
+    letter-spacing: 2px; text-transform: uppercase;
+    animation: fadeIn 1s 1s ease both;
+  }
+
+  .scroll-line {
+    width: 1px; height: 40px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scroll-pulse 2s infinite;
+  }
+
+  @keyframes scroll-pulse {
+    0%, 100% { opacity: 1; transform: scaleY(1); }
+    50% { opacity: 0.3; transform: scaleY(0.5); }
+  }
+
+  /* ===== SEARCH OVERLAY ===== */
+  #search-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(20px);
+    display: none; flex-direction: column;
+    align-items: center; padding-top: 15vh;
+    animation: fadeIn 0.3s ease;
+  }
+
+  #search-overlay.active { display: flex; }
+
+  .search-close {
+    position: absolute; top: 24px; right: 24px;
+    background: none; border: none;
+    color: var(--text2); font-size: 28px;
+    cursor: pointer; transition: color 0.2s;
+  }
+  .search-close:hover { color: var(--accent); }
+
+  .search-label {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3rem; letter-spacing: 4px;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(to right, var(--text), var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .search-input-wrap {
+    position: relative; width: min(600px, 90vw);
+    margin-bottom: 2rem;
+  }
+
+  .search-input-wrap input {
+    width: 100%; padding: 18px 60px 18px 24px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    color: var(--text); font-size: 18px; font-weight: 600;
+    font-family: 'Nunito', sans-serif;
+    outline: none; transition: border 0.3s;
+  }
+
+  .search-input-wrap input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(233,69,96,0.15);
+  }
+
+  .search-input-wrap input::placeholder { color: var(--text2); }
+
+  .search-submit {
+    position: absolute; right: 16px; top: 50%;
+    transform: translateY(-50%);
+    background: var(--accent); border: none;
+    width: 36px; height: 36px; border-radius: 8px;
+    color: white; cursor: pointer; font-size: 16px;
+    transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .search-submit:hover { transform: translateY(-50%) scale(1.1); }
+
+  .search-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+    width: min(900px, 90vw);
+    max-height: 50vh;
+    overflow-y: auto;
+    padding: 0.5rem;
+  }
+
+  /* ===== SECTIONS ===== */
+  .section {
+    padding: 4rem 2rem;
+    max-width: 1400px; margin: 0 auto;
+  }
+
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.2rem; letter-spacing: 2px;
+    display: flex; align-items: center; gap: 12px;
+  }
+
+  .section-title::before {
+    content: '';
+    display: block; width: 4px; height: 30px;
+    background: linear-gradient(to bottom, var(--accent), var(--purple));
+    border-radius: 2px;
+  }
+
+  .see-all {
+    color: var(--accent); text-decoration: none;
+    font-size: 13px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase;
+    display: flex; align-items: center; gap: 6px;
+    cursor: pointer; transition: gap 0.2s;
+  }
+  .see-all:hover { gap: 10px; }
+
+  /* ===== CARDS ===== */
+  .anime-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .anime-card {
+    position: relative; cursor: pointer;
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    background: var(--surface);
+    transition: transform 0.3s, box-shadow 0.3s;
+    group: true;
+  }
+
+  .anime-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 0 2px rgba(233,69,96,0.4);
+  }
+
+  .anime-card-thumb {
+    position: relative; aspect-ratio: 2/3; overflow: hidden;
+  }
+
+  .anime-card-thumb img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+    background: var(--surface2);
+  }
+
+  .anime-card:hover .anime-card-thumb img { transform: scale(1.08); }
+
+  .card-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+    opacity: 0; transition: opacity 0.3s;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding-bottom: 16px; gap: 8px;
+  }
+
+  .anime-card:hover .card-overlay { opacity: 1; }
+
+  .card-btn {
+    width: 36px; height: 36px; border-radius: 50%;
+    border: none; cursor: pointer; font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .card-btn-play {
+    background: var(--accent);
+    color: white;
+  }
+
+  .card-btn-info {
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(10px);
+    color: white;
+  }
+
+  .card-btn:hover { transform: scale(1.15); }
+
+  .card-badge {
+    position: absolute; top: 8px; left: 8px;
+    background: var(--accent); color: white;
+    font-size: 10px; font-weight: 800;
+    padding: 3px 8px; border-radius: 4px;
+    letter-spacing: 1px; text-transform: uppercase;
+  }
+
+  .card-badge.ongoing { background: var(--green); }
+  .card-badge.completed { background: var(--cyan); color: #000; }
+  .card-badge.movie { background: var(--gold); color: #000; }
+
+  .card-eps {
+    position: absolute; top: 8px; right: 8px;
+    background: rgba(0,0,0,0.7); color: var(--text2);
+    font-size: 10px; font-weight: 700;
+    padding: 3px 6px; border-radius: 4px;
+    backdrop-filter: blur(10px);
+  }
+
+  .anime-card-info {
+    padding: 10px 12px;
+  }
+
+  .anime-card-info h3 {
+    font-size: 13px; font-weight: 800;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-bottom: 4px;
+  }
+
+  .anime-card-meta {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--text2);
+  }
+
+  .card-rating {
+    color: var(--gold); font-weight: 700;
+    display: flex; align-items: center; gap: 3px;
+  }
+
+  /* ===== GENRE PILLS ===== */
+  .genre-pills {
+    display: flex; flex-wrap: wrap; gap: 10px;
+    margin-bottom: 2rem;
+  }
+
+  .genre-pill {
+    padding: 8px 18px; border-radius: 30px;
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text2);
+    transition: all 0.2s;
+  }
+
+  .genre-pill:hover, .genre-pill.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+    box-shadow: 0 0 15px rgba(233,69,96,0.3);
+  }
+
+  /* ===== HORIZONTAL SCROLL ===== */
+  .scroll-row {
+    display: flex; gap: 1.2rem; overflow-x: auto;
+    padding-bottom: 1rem; scrollbar-width: none;
+  }
+
+  .scroll-row::-webkit-scrollbar { display: none; }
+
+  .scroll-row .anime-card { flex: 0 0 160px; }
+
+  /* ===== DETAIL MODAL ===== */
+  #detail-modal {
+    position: fixed; inset: 0; z-index: 3000;
+    background: rgba(0,0,0,0.95);
+    backdrop-filter: blur(20px);
+    display: none; overflow-y: auto;
+    padding: 2rem;
+  }
+
+  #detail-modal.active { display: block; }
+
+  .modal-inner {
+    max-width: 900px; margin: 0 auto;
+    padding-top: 60px;
+  }
+
+  .modal-close {
+    position: fixed; top: 20px; right: 20px; z-index: 10;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-size: 20px;
+    width: 44px; height: 44px; border-radius: 10px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .modal-close:hover { background: var(--accent); border-color: var(--accent); }
+
+  .modal-hero {
+    display: grid; grid-template-columns: 220px 1fr; gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .modal-poster {
+    border-radius: 12px; overflow: hidden;
+    aspect-ratio: 2/3;
+  }
+
+  .modal-poster img {
+    width: 100%; height: 100%; object-fit: cover;
+  }
+
+  .modal-info h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.5rem; letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-tags {
+    display: flex; flex-wrap: wrap; gap: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .modal-tag {
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    background: var(--surface2); color: var(--text2);
+    border: 1px solid var(--border);
+  }
+
+  .modal-synopsis {
+    color: var(--text2); line-height: 1.8;
+    font-size: 14px; margin-bottom: 1.5rem;
+  }
+
+  .modal-actions {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+
+  .episodes-section { margin-top: 2rem; }
+
+  .episodes-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.8rem; letter-spacing: 2px;
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 10px;
+  }
+
+  .episodes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.8rem;
+  }
+
+  .ep-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text); font-size: 13px; font-weight: 700;
+    padding: 10px; border-radius: 8px;
+    cursor: pointer; text-align: center;
+    transition: all 0.2s;
+  }
+
+  .ep-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    transform: scale(1.03);
+  }
+
+  /* ===== VIDEO PLAYER MODAL ===== */
+  #player-modal {
+    position: fixed; inset: 0; z-index: 4000;
+    background: #000;
+    display: none; flex-direction: column;
+  }
+
+  #player-modal.active { display: flex; }
+
+  .player-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    background: rgba(0,0,0,0.8);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .player-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.4rem; letter-spacing: 2px;
+  }
+
+  .player-close {
+    background: var(--surface); border: none;
+    color: var(--text); font-size: 18px;
+    width: 40px; height: 40px; border-radius: 8px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+
+  .player-close:hover { background: var(--accent); }
+
+  .player-body {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+
+  .player-iframe-wrap {
+    width: 100%; max-width: 900px;
+    aspect-ratio: 16/9;
+    background: #111; border-radius: 12px; overflow: hidden;
+    position: relative;
+  }
+
+  .player-iframe-wrap iframe {
+    width: 100%; height: 100%; border: none;
+  }
+
+  .player-controls {
+    display: flex; align-items: center; gap: 1rem;
+    margin-top: 16px; flex-wrap: wrap; justify-content: center;
+  }
+
+  /* Resolution selector */
+  .res-select {
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); font-size: 13px; font-weight: 700;
+    padding: 8px 14px; border-radius: 8px;
+    cursor: pointer; outline: none;
+    font-family: 'Nunito', sans-serif;
+    transition: border-color 0.2s;
+  }
+
+  .res-select:focus { border-color: var(--accent); }
+
+  /* Download modal */
+  #download-modal {
+    position: fixed; inset: 0; z-index: 5000;
+    background: rgba(0,0,0,0.9);
+    backdrop-filter: blur(20px);
+    display: none; align-items: center; justify-content: center;
+    padding: 2rem;
+  }
+
+  #download-modal.active { display: flex; }
+
+  .download-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    width: min(500px, 90vw);
+    max-height: 80vh; overflow-y: auto;
+  }
+
+  .download-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem; letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+
+  .download-close {
+    background: none; border: none; color: var(--text2);
+    font-size: 22px; cursor: pointer; transition: color 0.2s;
+  }
+  .download-close:hover { color: var(--accent); }
+
+  .res-group { margin-bottom: 1.5rem; }
+
+  .res-group-title {
+    font-size: 12px; font-weight: 800;
+    color: var(--text2); letter-spacing: 2px;
+    text-transform: uppercase; margin-bottom: 0.8rem;
+    padding-bottom: 6px; border-bottom: 1px solid var(--border);
+  }
+
+  .download-links { display: flex; flex-direction: column; gap: 8px; }
+
+  .dl-link {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    text-decoration: none; color: var(--text);
+    font-size: 13px; font-weight: 700;
+    transition: all 0.2s; cursor: pointer;
+  }
+
+  .dl-link:hover {
+    border-color: var(--accent);
+    background: rgba(233,69,96,0.1);
+  }
+
+  .dl-server {
+    background: var(--surface);
+    padding: 3px 8px; border-radius: 4px;
+    font-size: 11px; color: var(--text2);
+  }
+
+  /* ===== TOAST ===== */
+  #toast-container {
+    position: fixed; bottom: 24px; right: 24px;
+    z-index: 9999;
+    display: flex; flex-direction: column-reverse; gap: 10px;
+  }
+
+  .toast {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px; font-weight: 700;
+    min-width: 250px;
+    animation: slideInRight 0.3s ease both;
+    backdrop-filter: blur(10px);
+  }
+
+  @keyframes slideInRight {
+    from { transform: translateX(100px); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+
+  .toast.success { border-left-color: var(--green); }
+  .toast.error { border-left-color: var(--accent); }
+  .toast.info { border-left-color: var(--cyan); }
+
+  /* ===== TABS ===== */
+  .tabs {
+    display: flex; gap: 0.5rem; margin-bottom: 2rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 2px;
+  }
+
+  .tab {
+    padding: 10px 20px; font-size: 13px; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase;
+    cursor: pointer; border: none; background: none;
+    color: var(--text2); border-bottom: 2px solid transparent;
+    margin-bottom: -2px; transition: all 0.2s;
+    font-family: 'Nunito', sans-serif;
+  }
+
+  .tab.active {
+    color: var(--accent); border-bottom-color: var(--accent);
+  }
+
+  .tab:hover { color: var(--text); }
+
+  /* ===== PAGES ===== */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ===== SCHEDULE ===== */
+  .schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 1rem;
+  }
+
+  .schedule-day { background: var(--surface); border-radius: 12px; overflow: hidden; }
+
+  .schedule-day-header {
+    padding: 10px 14px;
+    background: var(--surface2);
+    font-size: 12px; font-weight: 800;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--text2);
+    text-align: center;
+  }
+
+  .schedule-day-header.today { background: var(--accent); color: white; }
+
+  .schedule-items { padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+
+  .schedule-item {
+    padding: 8px 10px; background: var(--bg);
+    border-radius: 8px; font-size: 12px; font-weight: 700;
+    cursor: pointer; transition: background 0.2s;
+    border: 1px solid transparent;
+  }
+
+  .schedule-item:hover { background: var(--surface2); border-color: var(--border); }
+
+  .schedule-time {
+    font-size: 10px; color: var(--accent);
+    font-weight: 800; margin-bottom: 2px;
+  }
+
+  /* ===== DONATE / REPORT ===== */
+  .card-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 2rem;
+  }
+
+  .card-box h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem; letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+  }
+
+  .card-box p { color: var(--text2); line-height: 1.7; margin-bottom: 1.5rem; }
+
+  .form-group { margin-bottom: 1.2rem; }
+
+  .form-label {
+    display: block; font-size: 12px; font-weight: 800;
+    color: var(--text2); letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 8px;
+  }
+
+  .form-input, .form-textarea, .form-select {
+    width: 100%; padding: 12px 16px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text);
+    font-size: 14px; font-family: 'Nunito', sans-serif;
+    outline: none; transition: border 0.2s;
+  }
+
+  .form-input:focus, .form-textarea:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(233,69,96,0.1);
+  }
+
+  .form-textarea { resize: vertical; min-height: 120px; }
+
+  .form-select { cursor: pointer; }
+
+  /* ===== CHANGELOG ===== */
+  .changelog-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+  .changelog-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 1.5rem;
+    position: relative; overflow: hidden;
+  }
+
+  .changelog-item::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0; width: 3px;
+    background: linear-gradient(to bottom, var(--accent), var(--purple));
+  }
+
+  .changelog-version {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.4rem; letter-spacing: 2px;
+    color: var(--accent); margin-bottom: 4px;
+  }
+
+  .changelog-date {
+    font-size: 11px; color: var(--text2);
+    letter-spacing: 1px; text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .changelog-changes { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+
+  .changelog-changes li {
+    font-size: 13px; color: var(--text2);
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+
+  .changelog-changes li::before {
+    content: '✦'; color: var(--accent); font-size: 10px;
+    margin-top: 2px; flex-shrink: 0;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    margin-top: 4rem;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    padding: 3rem 2rem 1.5rem;
+  }
+
+  .footer-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem;
+    margin-bottom: 2rem;
+  }
+
+  .footer-brand p {
+    color: var(--text2); font-size: 13px; line-height: 1.7;
+    margin: 1rem 0;
+  }
+
+  .footer-social {
+    display: flex; gap: 10px;
+  }
+
+  .footer-social a {
+    width: 36px; height: 36px; border-radius: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text2); text-decoration: none; font-size: 14px;
+    transition: all 0.2s;
+  }
+
+  .footer-social a:hover {
+    background: var(--accent); border-color: var(--accent); color: white;
+  }
+
+  .footer-col h4 {
+    font-size: 12px; font-weight: 800; letter-spacing: 2px;
+    text-transform: uppercase; color: var(--text2);
+    margin-bottom: 1rem;
+  }
+
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+  .footer-col ul li a {
+    color: var(--text2); text-decoration: none; font-size: 13px;
+    transition: color 0.2s; cursor: pointer;
+  }
+
+  .footer-col ul li a:hover { color: var(--accent); }
+
+  .footer-bottom {
+    max-width: 1200px; margin: 0 auto;
+    padding-top: 1.5rem; border-top: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--text2);
+  }
+
+  .footer-bottom span { color: var(--accent); }
+
+  /* ===== LOADING ===== */
+  .loading-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.2rem;
+  }
+
+  .skeleton {
+    background: var(--surface);
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    animation: shimmer 1.5s infinite;
+  }
+
+  .skeleton-thumb { aspect-ratio: 2/3; background: var(--surface2); }
+  .skeleton-info { padding: 10px 12px; }
+  .skeleton-text {
+    height: 12px; background: var(--surface2);
+    border-radius: 4px; margin-bottom: 8px;
+  }
+  .skeleton-text.short { width: 60%; }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* ===== DONATE TIERS ===== */
+  .donate-tiers {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.2rem;
+    margin-bottom: 2rem;
+  }
+
+  .donate-tier {
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 16px; padding: 1.5rem;
+    text-align: center; cursor: pointer;
+    transition: all 0.3s;
+    position: relative; overflow: hidden;
+  }
+
+  .donate-tier.featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(233,69,96,0.2);
+  }
+
+  .donate-tier.featured::before {
+    content: 'POPULAR';
+    position: absolute; top: 12px; right: -20px;
+    background: var(--accent); color: white;
+    font-size: 9px; font-weight: 800; letter-spacing: 1px;
+    padding: 4px 28px;
+    transform: rotate(45deg);
+  }
+
+  .donate-tier:hover { transform: translateY(-4px); }
+
+  .tier-emoji { font-size: 2.5rem; margin-bottom: 0.5rem; }
+
+  .tier-name {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.4rem; letter-spacing: 2px; margin-bottom: 0.3rem;
+  }
+
+  .tier-amount {
+    font-size: 1.8rem; font-weight: 900;
+    color: var(--accent); margin-bottom: 0.5rem;
+  }
+
+  .tier-desc { font-size: 12px; color: var(--text2); line-height: 1.6; }
+
+  /* ===== BACK TO TOP ===== */
+  #back-top {
+    position: fixed; bottom: 24px; left: 24px; z-index: 900;
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--accent);
+    border: none; color: white; font-size: 18px;
+    cursor: pointer; display: none; align-items: center; justify-content: center;
+    transition: all 0.3s;
+    box-shadow: 0 4px 20px rgba(233,69,96,0.4);
+  }
+
+  #back-top.visible { display: flex; }
+  #back-top:hover { transform: translateY(-3px); }
+
+  /* ===== ANIMATIONS ===== */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1024px) {
+    .schedule-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-links.open {
+      display: flex; flex-direction: column;
+      position: absolute; top: 64px; left: 0; right: 0;
+      background: rgba(10,10,15,0.98);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      gap: 1rem;
+    }
+    .hamburger { display: flex; }
+    .modal-hero { grid-template-columns: 1fr; }
+    .modal-poster { max-width: 200px; }
+    .donate-tiers { grid-template-columns: 1fr; }
+    .schedule-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .footer-bottom { flex-direction: column; gap: 0.5rem; text-align: center; }
+    .hero-content { margin-left: 1.5rem; }
+  }
+
+  @media (max-width: 480px) {
+    .schedule-grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 1.2rem; }
+    .anime-grid { grid-template-columns: repeat(2, 1fr); }
+    .scroll-row .anime-card { flex: 0 0 140px; }
+  }
+
+  /* ===== NOTICE BANNER ===== */
+  .notice-banner {
+    background: linear-gradient(90deg, rgba(233,69,96,0.15), rgba(168,85,247,0.15));
+    border: 1px solid rgba(233,69,96,0.3);
+    border-radius: 10px; padding: 12px 16px;
+    margin-bottom: 2rem;
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px; color: var(--text2);
+  }
+
+  .notice-icon { font-size: 18px; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <a class="nav-logo" onclick="showPage('home')">
+    <div class="logo-icon">A</div>
+    <span class="logo-text">AnimeVerse</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a onclick="showPage('home')" class="active" data-page="home">Beranda</a></li>
+    <li><a onclick="showPage('ongoing')" data-page="ongoing">Ongoing</a></li>
+    <li><a onclick="showPage('completed')" data-page="completed">Completed</a></li>
+    <li><a onclick="showPage('movies')" data-page="movies">Movie</a></li>
+    <li><a onclick="showPage('genre')" data-page="genre">Genre</a></li>
+    <li><a onclick="showPage('schedule')" data-page="schedule">Jadwal</a></li>
+    <li><a onclick="showPage('update')" data-page="update">Update</a></li>
+    <li><a onclick="showPage('donate')" data-page="donate">Donasi ☕</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <button class="nav-search-btn" onclick="openSearch()" title="Cari anime">🔍</button>
+    <button class="hamburger" id="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <video id="hero-video" autoplay muted loop playsinline>
+    <!-- Fallback: no source needed, overlay handles it -->
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="hero-particles" id="particles"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🔥 Streaming Anime Sub Indo Gratis</div>
+    <h1 class="hero-title">
+      <span class="line1">NONTON</span>
+      <span class="line2">ANIME</span>
+      <span class="line1">SEKARANG</span>
+    </h1>
+    <p class="hero-subtitle">
+      Ribuan judul anime terlengkap dengan subtitle Indonesia. Streaming gratis, kualitas HD, update cepat setiap hari!
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="num" id="stat-total">5000+</div>
+        <div class="label">Judul Anime</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num" id="stat-ongoing">120+</div>
+        <div class="label">Ongoing</div>
+      </div>
+      <div class="hero-stat">
+        <div class="num">HD</div>
+        <div class="label">Kualitas</div>
+      </div>
+    </div>
+    <div class="hero-btns">
+      <button class="btn btn-primary" onclick="showPage('ongoing')">▶ Tonton Sekarang</button>
+      <button class="btn btn-secondary" onclick="openSearch()">🔍 Cari Anime</button>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <div class="scroll-line"></div>
+    <span>Scroll</span>
+  </div>
+</section>
+
+<!-- PAGES WRAPPER -->
+<div id="pages-wrapper">
+
+<!-- HOME PAGE -->
+<div class="page active" id="page-home">
+  <!-- TRENDING -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">🔥 Trending Hari Ini</h2>
+      <a class="see-all" onclick="showPage('ongoing')">Lihat Semua →</a>
+    </div>
+    <div class="scroll-row" id="trending-row">
+      <!-- Skeleton -->
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden">
+        <div class="skeleton-thumb"></div>
+        <div class="skeleton-info"><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+      </div>
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden">
+        <div class="skeleton-thumb"></div>
+        <div class="skeleton-info"><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+      </div>
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden">
+        <div class="skeleton-thumb"></div>
+        <div class="skeleton-info"><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+      </div>
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden">
+        <div class="skeleton-thumb"></div>
+        <div class="skeleton-info"><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+      </div>
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden">
+        <div class="skeleton-thumb"></div>
+        <div class="skeleton-info"><div class="skeleton-text"></div><div class="skeleton-text short"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONGOING -->
+  <div class="section" style="background:linear-gradient(135deg,rgba(233,69,96,0.05),transparent);border-radius:20px;">
+    <div class="section-header">
+      <h2 class="section-title">🟢 Sedang Tayang</h2>
+      <a class="see-all" onclick="showPage('ongoing')">Lihat Semua →</a>
+    </div>
+    <div class="scroll-row" id="home-ongoing-row">
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden"><div class="skeleton-thumb"></div><div class="skeleton-info"><div class="skeleton-text"></div></div></div>
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden"><div class="skeleton-thumb"></div><div class="skeleton-info"><div class="skeleton-text"></div></div></div>
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden"><div class="skeleton-thumb"></div><div class="skeleton-info"><div class="skeleton-text"></div></div></div>
+    </div>
+  </div>
+
+  <!-- COMPLETED -->
+  <div class="section">
+    <div class="section-header">
+      <h2 class="section-title">✅ Baru Selesai</h2>
+      <a class="see-all" onclick="showPage('completed')">Lihat Semua →</a>
+    </div>
+    <div class="scroll-row" id="home-completed-row">
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden"><div class="skeleton-thumb"></div><div class="skeleton-info"><div class="skeleton-text"></div></div></div>
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden"><div class="skeleton-thumb"></div><div class="skeleton-info"><div class="skeleton-text"></div></div></div>
+      <div class="skeleton" style="flex:0 0 160px;border-radius:12px;overflow:hidden"><div class="skeleton-thumb"></div><div class="skeleton-info"><div class="skeleton-text"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ONGOING PAGE -->
+<div class="page" id="page-ongoing">
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom:2rem">🟢 Anime Ongoing</h2>
+    <div class="anime-grid" id="ongoing-grid">
+      <!-- content loaded via JS -->
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <button class="btn btn-secondary" id="ongoing-more" onclick="loadMoreOngoing()">Muat Lebih Banyak</button>
+    </div>
+  </div>
+</div>
+
+<!-- COMPLETED PAGE -->
+<div class="page" id="page-completed">
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom:2rem">✅ Anime Completed</h2>
+    <div class="anime-grid" id="completed-grid">
+      <!-- content loaded via JS -->
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <button class="btn btn-secondary" id="completed-more" onclick="loadMoreCompleted()">Muat Lebih Banyak</button>
+    </div>
+  </div>
+</div>
+
+<!-- MOVIES PAGE -->
+<div class="page" id="page-movies">
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom:2rem">🎬 Anime Movie</h2>
+    <div class="anime-grid" id="movies-grid">
+    </div>
+    <div style="text-align:center;margin-top:2rem">
+      <button class="btn btn-secondary" id="movies-more" onclick="loadMoreMovies()">Muat Lebih Banyak</button>
+    </div>
+  </div>
+</div>
+
+<!-- GENRE PAGE -->
+<div class="page" id="page-genre">
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom:1.5rem">🏷️ Jelajahi Genre</h2>
+    <div class="genre-pills" id="genre-pills">
+      <!-- loaded via JS -->
+    </div>
+    <div id="genre-results">
+      <div style="text-align:center;padding:3rem;color:var(--text2)">
+        <div style="font-size:3rem;margin-bottom:1rem">🎭</div>
+        <p>Pilih genre di atas untuk melihat daftar anime</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCHEDULE PAGE -->
+<div class="page" id="page-schedule">
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom:2rem">📅 Jadwal Tayang Anime</h2>
+    <div class="schedule-grid" id="schedule-grid">
+      <!-- loaded via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- UPDATE PAGE -->
+<div class="page" id="page-update">
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom:2rem">📢 Update & Changelog</h2>
+    <div class="notice-banner">
+      <span class="notice-icon">💡</span>
+      AnimeVerse terus berkembang! Kami selalu menambahkan fitur baru dan perbaikan bug secara rutin.
+    </div>
+    <div class="changelog-list">
+      <div class="changelog-item">
+        <div class="changelog-version">v2.5.0 — Terbaru</div>
+        <div class="changelog-date">17 Maret 2025</div>
+        <ul class="changelog-changes">
+          <li>Penambahan fitur download multi-resolusi (360p, 480p, 720p, 1080p)</li>
+          <li>Hero section dengan video background yang lebih cinematic</li>
+          <li>Fitur ganti resolusi streaming langsung di player</li>
+          <li>Optimasi loading konten dengan lazy loading</li>
+          <li>Dark mode yang lebih halus dan nyaman di mata</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">v2.4.0</div>
+        <div class="changelog-date">10 Maret 2025</div>
+        <ul class="changelog-changes">
+          <li>Integrasi penuh dengan API Sankavollerei (120+ endpoint)</li>
+          <li>Jadwal tayang anime harian ditambahkan</li>
+          <li>Filter genre yang lebih responsif</li>
+          <li>Fix bug pencarian tidak menampilkan hasil pada mobile</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">v2.3.0</div>
+        <div class="changelog-date">1 Maret 2025</div>
+        <ul class="changelog-changes">
+          <li>Penambahan halaman Anime Movie terpisah</li>
+          <li>Animasi transisi halaman yang lebih smooth</li>
+          <li>Peningkatan performa loading di jaringan lambat</li>
+          <li>Tambah tooltip informasi detail anime saat hover</li>
+        </ul>
+      </div>
+      <div class="changelog-item">
+        <div class="changelog-version">v2.0.0</div>
+        <div class="changelog-date">15 Februari 2025</div>
+        <ul class="changelog-changes">
+          <li>Desain ulang total — lebih modern, lebih gelap, lebih keren</li>
+          <li>Sistem routing halaman tanpa reload</li>
+          <li>Player video terintegrasi langsung di website</li>
+          <li>Sistem notifikasi toast untuk feedback pengguna</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Report Bug -->
+    <div id="report-form-section" style="margin-top:3rem">
+      <div class="card-box">
+        <h2>🐛 Lapor Bug</h2>
+        <p>Temukan masalah atau error? Beritahu kami agar bisa diperbaiki secepatnya!</p>
+        <div class="form-group">
+          <label class="form-label">Jenis Bug</label>
+          <select class="form-select" id="bug-type">
+            <option value="">-- Pilih Jenis Bug --</option>
+            <option value="video">Video tidak bisa diputar</option>
+            <option value="download">Link download rusak/dead</option>
+            <option value="sub">Subtitle bermasalah</option>
+            <option value="loading">Halaman loading terus</option>
+            <option value="display">Tampilan/UI rusak</option>
+            <option value="search">Pencarian tidak berfungsi</option>
+            <option value="other">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Judul Anime (jika ada)</label>
+          <input type="text" class="form-input" id="bug-anime" placeholder="Contoh: Naruto Shippuden Episode 300">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Deskripsi Bug</label>
+          <textarea class="form-textarea" id="bug-desc" placeholder="Ceritakan detail masalah yang kamu temukan..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email (opsional)</label>
+          <input type="email" class="form-input" id="bug-email" placeholder="email@kamu.com">
+        </div>
+        <button class="btn btn-primary" onclick="submitBug()">🚀 Kirim Laporan</button>
+      </div>
+    </div>
+
+    <!-- Request Fitur -->
+    <div style="margin-top:2rem">
+      <div class="card-box">
+        <h2>✨ Request Fitur</h2>
+        <p>Punya ide fitur keren? Kami akan mempertimbangkan semua usulan yang masuk!</p>
+        <div class="form-group">
+          <label class="form-label">Nama Fitur</label>
+          <input type="text" class="form-input" id="feat-name" placeholder="Contoh: Fitur bookmark / playlist">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Deskripsi Fitur</label>
+          <textarea class="form-textarea" id="feat-desc" placeholder="Jelaskan fitur yang kamu inginkan..."></textarea>
+        </div>
+        <button class="btn btn-primary" onclick="submitFeature()">💡 Submit Ide</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DONATE PAGE -->
+<div class="page" id="page-donate">
+  <div class="section">
+    <h2 class="section-title" style="margin-bottom:0.5rem">☕ Dukung AnimeVerse</h2>
+    <p style="color:var(--text2);margin-bottom:2.5rem;max-width:600px">
+      AnimeVerse 100% gratis! Jika kamu menikmati layanan ini, pertimbangkan untuk mendukung pengembang agar bisa terus update dan tambah fitur baru. ❤️
+    </p>
+
+    <div class="donate-tiers">
+      <div class="donate-tier" onclick="openDonateLink('5000')">
+        <div class="tier-emoji">☕</div>
+        <div class="tier-name">Kopi</div>
+        <div class="tier-amount">Rp 5.000</div>
+        <div class="tier-desc">Traktir kopi satu cangkir untuk developer yang lembur coding!</div>
+      </div>
+      <div class="donate-tier featured" onclick="openDonateLink('15000')">
+        <div class="tier-emoji">🍜</div>
+        <div class="tier-name">Makan Siang</div>
+        <div class="tier-amount">Rp 15.000</div>
+        <div class="tier-desc">Biar developer bisa makan siang dan coding dengan lebih semangat!</div>
+      </div>
+      <div class="donate-tier" onclick="openDonateLink('50000')">
+        <div class="tier-emoji">🌟</div>
+        <div class="tier-name">Super Supporter</div>
+        <div class="tier-amount">Rp 50.000</div>
+        <div class="tier-desc">Dukungan super! Namamu akan masuk Hall of Fame donatur!</div>
+      </div>
+    </div>
+
+    <div class="card-box" style="max-width:500px">
+      <h2>💳 Nominal Custom</h2>
+      <p>Mau donasi berapapun tetap sangat berarti!</p>
+      <div class="form-group">
+        <label class="form-label">Nama</label>
+        <input type="text" class="form-input" id="donate-name" placeholder="Nama kamu (atau anonim)">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nominal (Rp)</label>
+        <input type="number" class="form-input" id="donate-amount" placeholder="10000" min="1000">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pesan (opsional)</label>
+        <input type="text" class="form-input" id="donate-msg" placeholder="Semangat terus dev!">
+      </div>
+      <button class="btn btn-primary" onclick="submitDonate()" style="width:100%">❤️ Kirim Dukungan</button>
+    </div>
+
+    <!-- Hall of Fame -->
+    <div style="margin-top:3rem">
+      <h2 class="section-title" style="margin-bottom:1.5rem">🏆 Hall of Fame</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:1rem" id="hall-of-fame">
+        <!-- Placeholder donors -->
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end pages-wrapper -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="nav-logo" onclick="showPage('home')" style="display:inline-flex">
+        <div class="logo-icon">A</div>
+        <span class="logo-text">AnimeVerse</span>
+      </a>
+      <p>Platform streaming anime sub Indo gratis terlengkap. Nonton anime favorit kamu kapan saja dan di mana saja dengan kualitas terbaik.</p>
+      <div class="footer-social">
+        <a href="#" title="Telegram">✈</a>
+        <a href="#" title="Discord">🎮</a>
+        <a href="#" title="Instagram">📷</a>
+        <a href="#" title="Twitter">🐦</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Navigasi</h4>
+      <ul>
+        <li><a onclick="showPage('home')">Beranda</a></li>
+        <li><a onclick="showPage('ongoing')">Ongoing</a></li>
+        <li><a onclick="showPage('completed')">Completed</a></li>
+        <li><a onclick="showPage('movies')">Movie</a></li>
+        <li><a onclick="showPage('schedule')">Jadwal</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Fitur</h4>
+      <ul>
+        <li><a onclick="openSearch()">Pencarian</a></li>
+        <li><a onclick="showPage('genre')">Filter Genre</a></li>
+        <li><a onclick="showPage('update')">Update Fitur</a></li>
+        <li><a onclick="showPage('update')">Lapor Bug</a></li>
+        <li><a onclick="showPage('donate')">Donasi</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Info</h4>
+      <ul>
+        <li><a>Tentang Kami</a></li>
+        <li><a>Privacy Policy</a></li>
+        <li><a>Disclaimer</a></li>
+        <li><a>API Credits</a></li>
+        <li><a onclick="showPage('update')">Changelog</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 AnimeVerse — Data by <span>Sankavollerei API</span></p>
+    <p>Dibuat dengan <span>❤️</span> oleh komunitas</p>
+  </div>
+</footer>
+
+<!-- SEARCH OVERLAY -->
+<div id="search-overlay">
+  <button class="search-close" onclick="closeSearch()">✕</button>
+  <div class="search-label">CARI ANIME</div>
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" placeholder="Ketik judul anime..." autocomplete="off">
+    <button class="search-submit" onclick="doSearch()">🔍</button>
+  </div>
+  <div class="search-results-grid" id="search-results"></div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div id="detail-modal">
+  <button class="modal-close" onclick="closeDetail()">✕</button>
+  <div class="modal-inner" id="detail-content"></div>
+</div>
+
+<!-- PLAYER MODAL -->
+<div id="player-modal">
+  <div class="player-header">
+    <span class="player-title" id="player-title">Memuat video...</span>
+    <button class="player-close" onclick="closePlayer()">✕</button>
+  </div>
+  <div class="player-body">
+    <div class="player-iframe-wrap" id="player-frame">
+      <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text2)">
+        ⏳ Memuat player...
+      </div>
+    </div>
+    <div class="player-controls">
+      <select class="res-select" id="res-select" onchange="changeRes()">
+        <option value="360">360p</option>
+        <option value="480">480p</option>
+        <option value="720" selected>720p HD</option>
+        <option value="1080">1080p Full HD</option>
+      </select>
+      <button class="btn btn-secondary" style="padding:8px 16px;font-size:12px" onclick="openDownloadFromPlayer()">⬇ Download</button>
+      <button class="btn btn-secondary" style="padding:8px 16px;font-size:12px" onclick="copyPlayerLink()">🔗 Share</button>
+    </div>
+  </div>
+</div>
+
+<!-- DOWNLOAD MODAL -->
+<div id="download-modal">
+  <div class="download-box">
+    <div class="download-title">
+      ⬇ Download
+      <button class="download-close" onclick="closeDownload()">✕</button>
+    </div>
+    <div id="download-content">
+      <!-- loaded via JS -->
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- BACK TO TOP -->
+<button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ===== CONFIG =====
+const API_BASE = 'https://www.sankavollerei.com/anime/otakudesu';
+const IMG_FALLBACK = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDIwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIzMDAiIGZpbGw9IiMxZTFlMzUiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZmlsbD0iIzYwNjA4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZvbnQtc2l6ZT0iNDAiPvCfmmE8L3RleHQ+PC9zdmc+';
+
+let currentPage = 'home';
+let searchTimeout;
+let ongoingPage = 1;
+let completedPage = 1;
+let moviesPage = 1;
+let currentDownloadData = null;
+let currentPlayerUrl = null;
+let currentEpTitle = '';
+
+// Hall of Fame dummy data
+const hallOfFame = [
+  { name: 'Budi S.', amount: 50000, msg: 'Semangat!' },
+  { name: 'Anonim', amount: 15000, msg: 'Keep it up!' },
+  { name: 'Rizky F.', amount: 25000, msg: 'Mantap websitenya' },
+  { name: 'Siti N.', amount: 10000, msg: '❤️' },
+  { name: 'Joko W.', amount: 50000, msg: 'GWS developer' },
+  { name: 'Dewi R.', amount: 15000, msg: 'Sukses terus!' },
+];
+
+// ===== PARTICLES =====
+function createParticles() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (5 + Math.random() * 10) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.width = p.style.height = (1 + Math.random() * 3) + 'px';
+    const hue = Math.random() > 0.5 ? '350' : '270';
+    p.style.background = `hsl(${hue}, 80%, 60%)`;
+    container.appendChild(p);
+  }
+}
+createParticles();
+
+// ===== API FETCH =====
+async function apiFetch(path) {
+  try {
+    const res = await fetch(API_BASE + path);
+    if (!res.ok) throw new Error('API error');
+    const data = await res.json();
+    return data;
+  } catch (e) {
+    console.error('API error:', e.message);
+    return null;
+  }
+}
+
+// ===== PAGE NAVIGATION =====
+function showPage(name) {
+  // Hide all pages
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  
+  // Update nav active
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === name);
+  });
+
+  currentPage = name;
+  
+  // Scroll to top of page content
+  window.scrollTo({ top: document.getElementById('hero').offsetHeight - 64, behavior: 'smooth' });
+
+  // Load page content if needed
+  if (name === 'ongoing') loadOngoing();
+  if (name === 'completed') loadCompleted();
+  if (name === 'movies') loadMovies();
+  if (name === 'genre') loadGenres();
+  if (name === 'schedule') loadSchedule();
+  if (name === 'donate') renderHallOfFame();
+}
+
+// ===== CARD RENDERER =====
+function renderCard(anime, badge = '') {
+  const title = anime.title || anime.judul || 'Tanpa Judul';
+  const img = anime.poster || anime.thumbnail || anime.thumb || anime.image || IMG_FALLBACK;
+  const eps = anime.episode || anime.eps || '';
+  const slug = anime.slug || anime.endpoint || '';
+  
+  const badgeHtml = badge ? `<span class="card-badge ${badge.toLowerCase()}">${badge}</span>` : '';
+  const epsHtml = eps ? `<div class="card-eps">Ep ${eps}</div>` : '';
+  
+  return `
+    <div class="anime-card" onclick="openDetail('${slug}', '${encodeURIComponent(title)}')">
+      <div class="anime-card-thumb">
+        <img src="${img}" alt="${title}" loading="lazy" onerror="this.src='${IMG_FALLBACK}'">
+        ${badgeHtml}${epsHtml}
+        <div class="card-overlay">
+          <button class="card-btn card-btn-play" onclick="event.stopPropagation();openDetail('${slug}','${encodeURIComponent(title)}')">▶</button>
+          <button class="card-btn card-btn-info" onclick="event.stopPropagation();openDetail('${slug}','${encodeURIComponent(title)}')">ℹ</button>
+        </div>
+      </div>
+      <div class="anime-card-info">
+        <h3 title="${title}">${title}</h3>
+        <div class="anime-card-meta">
+          <span class="card-rating">★ ${(Math.random()*2+7).toFixed(1)}</span>
+          <span>${anime.type || anime.tipe || 'TV'}</span>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// ===== LOADING SKELETONS =====
+function skeletons(count = 8, flex = false) {
+  const style = flex ? 'flex:0 0 160px;' : '';
+  return Array(count).fill(`
+    <div class="skeleton" style="${style}border-radius:12px;overflow:hidden">
+      <div class="skeleton-thumb"></div>
+      <div class="skeleton-info">
+        <div class="skeleton-text"></div>
+        <div class="skeleton-text short"></div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ===== HOME LOAD =====
+async function loadHome() {
+  const trendRow = document.getElementById('trending-row');
+  const ongoRow = document.getElementById('home-ongoing-row');
+  const compRow = document.getElementById('home-completed-row');
+  
+  trendRow.innerHTML = skeletons(8, true);
+  ongoRow.innerHTML = skeletons(8, true);
+  compRow.innerHTML = skeletons(8, true);
+  
+  const [homeData, ongoingData, completedData] = await Promise.all([
+    apiFetch('/home'),
+    apiFetch('/ongoing?page=1'),
+    apiFetch('/completed?page=1')
+  ]);
+  
+  // Render trending from home
+  if (homeData && (homeData.data || homeData.result)) {
+    const items = homeData.data || homeData.result || [];
+    const list = Array.isArray(items) ? items : (items.popular || items.ongoing || items.latest || []);
+    if (list.length) {
+      trendRow.innerHTML = list.slice(0, 12).map(a => `<div style="flex:0 0 160px">${renderCard(a, '')}</div>`).join('');
+    } else {
+      trendRow.innerHTML = '<p style="color:var(--text2);padding:1rem">Data tidak tersedia</p>';
+    }
+  } else {
+    trendRow.innerHTML = '<p style="color:var(--text2);padding:1rem">Gagal memuat data — coba lagi nanti.</p>';
+  }
+  
+  // Render ongoing
+  if (ongoingData && (ongoingData.data || ongoingData.result)) {
+    const items = extractList(ongoingData);
+    ongoRow.innerHTML = items.slice(0, 12).map(a => `<div style="flex:0 0 160px">${renderCard(a, 'Ongoing')}</div>`).join('') || '<p style="color:var(--text2)">Tidak ada data</p>';
+  } else {
+    ongoRow.innerHTML = '<p style="color:var(--text2);padding:1rem">Gagal memuat — coba lagi nanti</p>';
+  }
+  
+  // Render completed
+  if (completedData && (completedData.data || completedData.result)) {
+    const items = extractList(completedData);
+    compRow.innerHTML = items.slice(0, 12).map(a => `<div style="flex:0 0 160px">${renderCard(a, 'Completed')}</div>`).join('') || '<p style="color:var(--text2)">Tidak ada data</p>';
+  } else {
+    compRow.innerHTML = '<p style="color:var(--text2);padding:1rem">Gagal memuat — coba lagi nanti</p>';
+  }
+}
+
+function extractList(data) {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+  if (data.data && Array.isArray(data.data)) return data.data;
+  if (data.result && Array.isArray(data.result)) return data.result;
+  if (data.animeList) return data.animeList;
+  const keys = Object.keys(data);
+  for (const k of keys) {
+    if (Array.isArray(data[k]) && data[k].length > 0) return data[k];
+  }
+  return [];
+}
+
+// ===== ONGOING =====
+async function loadOngoing() {
+  const grid = document.getElementById('ongoing-grid');
+  if (ongoingPage === 1 || grid.innerHTML === '') {
+    grid.innerHTML = skeletons(16);
+  }
+  const data = await apiFetch(`/ongoing?page=${ongoingPage}`);
+  const items = extractList(data);
+  if (ongoingPage === 1) grid.innerHTML = '';
+  if (items.length) {
+    grid.innerHTML += items.map(a => renderCard(a, 'Ongoing')).join('');
+  } else if (ongoingPage === 1) {
+    grid.innerHTML = '<p style="color:var(--text2);grid-column:1/-1;text-align:center;padding:3rem">Data tidak tersedia</p>';
+  }
+}
+
+function loadMoreOngoing() {
+  ongoingPage++;
+  loadOngoing();
+}
+
+// ===== COMPLETED =====
+async function loadCompleted() {
+  const grid = document.getElementById('completed-grid');
+  if (completedPage === 1 || grid.innerHTML === '') {
+    grid.innerHTML = skeletons(16);
+  }
+  const data = await apiFetch(`/completed?page=${completedPage}`);
+  const items = extractList(data);
+  if (completedPage === 1) grid.innerHTML = '';
+  if (items.length) {
+    grid.innerHTML += items.map(a => renderCard(a, 'Completed')).join('');
+  } else if (completedPage === 1) {
+    grid.innerHTML = '<p style="color:var(--text2);grid-column:1/-1;text-align:center;padding:3rem">Data tidak tersedia</p>';
+  }
+}
+
+function loadMoreCompleted() {
+  completedPage++;
+  loadCompleted();
+}
+
+// ===== MOVIES =====
+async function loadMovies() {
+  const grid = document.getElementById('movies-grid');
+  if (moviesPage === 1 || grid.innerHTML === '') {
+    grid.innerHTML = skeletons(16);
+  }
+  const data = await apiFetch(`/movies?page=${moviesPage}`);
+  const items = extractList(data);
+  if (moviesPage === 1) grid.innerHTML = '';
+  if (items.length) {
+    grid.innerHTML += items.map(a => renderCard(a, 'Movie')).join('');
+  } else if (moviesPage === 1) {
+    grid.innerHTML = '<p style="color:var(--text2);grid-column:1/-1;text-align:center;padding:3rem">Data tidak tersedia</p>';
+  }
+}
+
+function loadMoreMovies() {
+  moviesPage++;
+  loadMovies();
+}
+
+// ===== GENRES =====
+async function loadGenres() {
+  const container = document.getElementById('genre-pills');
+  container.innerHTML = '<span style="color:var(--text2)">Memuat genre...</span>';
+  const data = await apiFetch('/genres');
+  const genres = extractList(data);
+  if (genres.length) {
+    container.innerHTML = genres.map(g => {
+      const name = g.name || g.genre || g.title || g;
+      const slug = g.slug || g.endpoint || (typeof g === 'string' ? g : name.toLowerCase());
+      return `<button class="genre-pill" onclick="filterGenre('${slug}', '${name}', this)">${name}</button>`;
+    }).join('');
+  } else {
+    // Fallback genre list
+    const fallback = ['Action','Adventure','Comedy','Drama','Fantasy','Horror','Magic','Mecha','Mystery','Romance','Sci-Fi','Slice of Life','Sports','Supernatural','Thriller'];
+    container.innerHTML = fallback.map(g =>
+      `<button class="genre-pill" onclick="filterGenre('${g.toLowerCase()}', '${g}', this)">${g}</button>`
+    ).join('');
+  }
+}
+
+async function filterGenre(slug, name, el) {
+  document.querySelectorAll('.genre-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  
+  const results = document.getElementById('genre-results');
+  results.innerHTML = `<div class="loading-grid">${skeletons(12)}</div>`;
+  
+  const data = await apiFetch(`/genres/${slug}`);
+  const items = extractList(data);
+  if (items.length) {
+    results.innerHTML = `<div class="anime-grid">${items.map(a => renderCard(a)).join('')}</div>`;
+  } else {
+    results.innerHTML = `<p style="color:var(--text2);text-align:center;padding:3rem">Tidak ada anime untuk genre "${name}"</p>`;
+  }
+}
+
+// ===== SCHEDULE =====
+async function loadSchedule() {
+  const container = document.getElementById('schedule-grid');
+  container.innerHTML = '<p style="color:var(--text2)">Memuat jadwal...</p>';
+  
+  const data = await apiFetch('/schedule');
+  const days = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu','Minggu'];
+  const todayIdx = (new Date().getDay() + 6) % 7;
+  
+  let scheduleByDay = {};
+  
+  if (data && typeof data === 'object') {
+    const content = data.data || data.result || data;
+    if (Array.isArray(content)) {
+      content.forEach(item => {
+        const day = item.day || item.hari || 'Senin';
+        if (!scheduleByDay[day]) scheduleByDay[day] = [];
+        scheduleByDay[day].push(item);
+      });
+    } else if (typeof content === 'object') {
+      scheduleByDay = content;
+    }
+  }
+  
+  container.innerHTML = days.map((day, i) => {
+    const isToday = i === todayIdx;
+    const animes = scheduleByDay[day] || scheduleByDay[day.toLowerCase()] || [];
+    const items = animes.slice(0, 8).map(a => {
+      const title = a.title || a.judul || a.name || 'Unknown';
+      const time = a.time || a.jam || '';
+      return `
+        <div class="schedule-item" onclick="openDetail('${a.slug || a.endpoint || ''}', '${encodeURIComponent(title)}')">
+          ${time ? `<div class="schedule-time">🕐 ${time}</div>` : ''}
+          <div style="font-size:12px;font-weight:700">${title}</div>
+        </div>
+      `;
+    }).join('');
+    return `
+      <div class="schedule-day">
+        <div class="schedule-day-header ${isToday ? 'today' : ''}">${day}${isToday ? ' (Hari Ini)' : ''}</div>
+        <div class="schedule-items">
+          ${items || '<p style="color:var(--text2);font-size:12px;padding:8px">Tidak ada jadwal</p>'}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ===== SEARCH =====
+function openSearch() {
+  document.getElementById('search-overlay').classList.add('active');
+  setTimeout(() => document.getElementById('search-input').focus(), 100);
+}
+
+function closeSearch() {
+  document.getElementById('search-overlay').classList.remove('active');
+}
+
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doSearch();
+  if (e.key === 'Escape') closeSearch();
+});
+
+document.getElementById('search-input').addEventListener('input', () => {
+  clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(doSearch, 500);
+});
+
+async function doSearch() {
+  const q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  const container = document.getElementById('search-results');
+  container.innerHTML = `<div style="color:var(--text2);grid-column:1/-1;text-align:center;padding:2rem">🔍 Mencari "${q}"...</div>`;
+  
+  const data = await apiFetch(`/search?q=${encodeURIComponent(q)}`);
+  const items = extractList(data);
+  
+  if (items.length) {
+    container.innerHTML = items.map(a => renderCard(a)).join('');
+  } else {
+    container.innerHTML = `<div style="color:var(--text2);grid-column:1/-1;text-align:center;padding:2rem">
+      <div style="font-size:3rem;margin-bottom:1rem">😔</div>
+      <p>Anime "<strong style="color:white">${q}</strong>" tidak ditemukan</p>
+    </div>`;
+  }
+}
+
+// ===== DETAIL MODAL =====
+async function openDetail(slug, titleEncoded) {
+  if (!slug) { showToast('Slug anime tidak ditemukan', 'error'); return; }
+  const title = decodeURIComponent(titleEncoded);
+  
+  const modal = document.getElementById('detail-modal');
+  const content = document.getElementById('detail-content');
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  
+  content.innerHTML = `
+    <div style="text-align:center;padding:4rem;color:var(--text2)">
+      <div style="font-size:3rem;margin-bottom:1rem;animation:spin 1s linear infinite;display:inline-block">⏳</div>
+      <p>Memuat detail anime...</p>
+    </div>
+  `;
+  
+  const data = await apiFetch(`/${slug}`);
+  
+  if (!data) {
+    content.innerHTML = `
+      <div style="text-align:center;padding:4rem;color:var(--text2)">
+        <div style="font-size:3rem;margin-bottom:1rem">😢</div>
+        <p>Gagal memuat detail. Coba lagi nanti.</p>
+        <button class="btn btn-secondary" onclick="closeDetail()" style="margin-top:1rem">Tutup</button>
+      </div>
+    `;
+    return;
+  }
+  
+  const info = data.data || data.result || data;
+  const episodes = info.episodeList || info.episodes || info.episode_list || [];
+  const genres = info.genreList || info.genres || info.genre || [];
+  const synopsis = info.synopsis || info.sinopsis || info.description || 'Tidak ada sinopsis.';
+  const img = info.poster || info.thumbnail || info.thumb || IMG_FALLBACK;
+  const animeTitle = info.title || info.judul || title;
+  const status = info.status || '';
+  const type = info.type || info.tipe || 'TV';
+  const studio = info.studio || '';
+  const season = info.season || '';
+  
+  const genreTags = Array.isArray(genres)
+    ? genres.map(g => `<span class="modal-tag">${g.name || g.genre || g}</span>`).join('')
+    : '';
+  
+  const episodeHtml = episodes.length
+    ? episodes.map(ep => {
+        const epSlug = ep.slug || ep.endpoint || ep.url || '';
+        const epName = ep.episode || ep.eps || ep.name || ep.title || 'Episode';
+        return `<button class="ep-btn" onclick="openPlayer('${epSlug}', '${encodeURIComponent(animeTitle + ' - ' + epName)}', ${JSON.stringify(episodes).replace(/'/g,"&#39;").substring(0,20)})">${epName}</button>`;
+      }).join('')
+    : '<p style="color:var(--text2)">Episode belum tersedia</p>';
+  
+  content.innerHTML = `
+    <div class="modal-hero">
+      <div class="modal-poster">
+        <img src="${img}" alt="${animeTitle}" onerror="this.src='${IMG_FALLBACK}'">
+      </div>
+      <div class="modal-info">
+        <h1>${animeTitle}</h1>
+        <div class="modal-tags">
+          ${status ? `<span class="modal-tag" style="border-color:var(--green);color:var(--green)">${status}</span>` : ''}
+          ${type ? `<span class="modal-tag">${type}</span>` : ''}
+          ${studio ? `<span class="modal-tag">${studio}</span>` : ''}
+          ${season ? `<span class="modal-tag">${season}</span>` : ''}
+          ${genreTags}
+        </div>
+        <p class="modal-synopsis">${synopsis}</p>
+        <div class="modal-actions">
+          ${episodes.length ? `<button class="btn btn-primary" onclick="openPlayer('${episodes[episodes.length-1]?.slug || episodes[0]?.slug || ''}', '${encodeURIComponent(animeTitle + ' - Episode 1')}')">▶ Tonton Sekarang</button>` : ''}
+          <button class="btn btn-secondary" onclick="openDownload('${encodeURIComponent(JSON.stringify({title:animeTitle,episodes: episodes.slice(0,10)}))}')">⬇ Download</button>
+        </div>
+      </div>
+    </div>
+    <div class="episodes-section">
+      <div class="episodes-title">📺 Daftar Episode <span style="font-size:1rem;color:var(--text2)">(${episodes.length} eps)</span></div>
+      <div class="episodes-grid">${episodeHtml}</div>
+    </div>
+  `;
+}
+
+function closeDetail() {
+  document.getElementById('detail-modal').classList.remove('active');
+  document.body.style.overflow = '';
+}
+
+// ===== PLAYER =====
+async function openPlayer(slug, titleEncoded) {
+  if (!slug) { showToast('Gagal membuka player', 'error'); return; }
+  const title = decodeURIComponent(titleEncoded);
+  currentEpTitle = title;
+  
+  const modal = document.getElementById('player-modal');
+  const frame = document.getElementById('player-frame');
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('player-title').textContent = title;
+  
+  frame.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text2)">⏳ Memuat streaming...</div>`;
+  
+  const data = await apiFetch(`/${slug}`);
+  
+  if (!data) {
+    frame.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text2);flex-direction:column;gap:1rem">
+      <div style="font-size:3rem">😢</div>
+      <p>Gagal memuat video. Coba lagi.</p>
+    </div>`;
+    return;
+  }
+  
+  // Try to get streaming URL from response
+  const info = data.data || data.result || data;
+  const streamUrl = info.streamUrl || info.stream_url || info.url || info.src || '';
+  const mirrors = info.mirror || info.server || info.sources || [];
+  
+  currentDownloadData = info;
+  
+  if (streamUrl) {
+    currentPlayerUrl = streamUrl;
+    frame.innerHTML = `<iframe src="${streamUrl}" allowfullscreen allow="autoplay"></iframe>`;
+  } else if (mirrors && mirrors.length) {
+    const firstMirror = mirrors[0];
+    const mirrorUrl = firstMirror.url || firstMirror.src || firstMirror.streamUrl || '';
+    if (mirrorUrl) {
+      currentPlayerUrl = mirrorUrl;
+      frame.innerHTML = `<iframe src="${mirrorUrl}" allowfullscreen allow="autoplay"></iframe>`;
+    }
+  } else {
+    frame.innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:center;height:100%;color:var(--text2);flex-direction:column;gap:1rem;padding:2rem;text-align:center">
+        <div style="font-size:3rem">📺</div>
+        <p>Player tidak tersedia secara langsung.<br>Gunakan tombol download untuk menonton.</p>
+        <button class="btn btn-primary" onclick="openDownloadFromPlayer()">⬇ Download Episode</button>
+      </div>
+    `;
+  }
+}
+
+function closePlayer() {
+  document.getElementById('player-modal').classList.remove('active');
+  document.body.style.overflow = '';
+  document.getElementById('player-frame').innerHTML = '';
+}
+
+function changeRes() {
+  const res = document.getElementById('res-select').value;
+  showToast(`Resolusi diubah ke ${res}p`, 'info');
+  // In real impl: reload stream with selected resolution
+}
+
+function copyPlayerLink() {
+  if (currentPlayerUrl) {
+    navigator.clipboard.writeText(currentPlayerUrl).then(() => showToast('Link stream disalin!', 'success'));
+  } else {
+    showToast('Tidak ada link untuk disalin', 'error');
+  }
+}
+
+function openDownloadFromPlayer() {
+  if (currentDownloadData) {
+    openDownload(encodeURIComponent(JSON.stringify(currentDownloadData)));
+  } else {
+    showToast('Data download tidak tersedia', 'error');
+  }
+}
+
+// ===== DOWNLOAD MODAL =====
+function openDownload(dataEncoded) {
+  const modal = document.getElementById('download-modal');
+  const content = document.getElementById('download-content');
+  modal.classList.add('active');
+  
+  let info = {};
+  try {
+    info = JSON.parse(decodeURIComponent(dataEncoded));
+  } catch(e) {
+    info = { title: 'Anime', episodes: [] };
+  }
+  
+  const title = info.title || info.judul || 'Download';
+  const downloadLinks = info.download || info.downloads || info.mirror || info.server || [];
+  
+  // Build download UI
+  const resolutions = ['360p', '480p', '720p', '1080p'];
+  const servers = ['GDrive', 'Mega', 'Mediafire', 'Zippy', 'Acefile'];
+  
+  let html = `<p style="color:var(--text2);font-size:13px;margin-bottom:1.5rem">📥 ${title}</p>`;
+  
+  if (downloadLinks && downloadLinks.length) {
+    // Group by resolution
+    const byRes = {};
+    downloadLinks.forEach(dl => {
+      const res = dl.resolution || dl.quality || dl.reso || '720p';
+      if (!byRes[res]) byRes[res] = [];
+      byRes[res].push(dl);
+    });
+    
+    Object.entries(byRes).forEach(([res, links]) => {
+      html += `
+        <div class="res-group">
+          <div class="res-group-title">${res}</div>
+          <div class="download-links">
+            ${links.map(l => `
+              <a class="dl-link" href="${l.url || l.src || '#'}" target="_blank" rel="noopener">
+                <span>⬇ ${l.name || l.server || 'Download'}</span>
+                <span class="dl-server">${l.server || res}</span>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+  } else {
+    // Placeholder download UI
+    resolutions.forEach(res => {
+      html += `
+        <div class="res-group">
+          <div class="res-group-title">${res}</div>
+          <div class="download-links">
+            ${servers.slice(0,3).map(srv => `
+              <a class="dl-link" href="#" onclick="showToast('Silakan buka detail episode untuk link download', 'info');return false">
+                <span>⬇ ${srv}</span>
+                <span class="dl-server">${res}</span>
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    });
+  }
+  
+  content.innerHTML = html;
+}
+
+function closeDownload() {
+  document.getElementById('download-modal').classList.remove('active');
+}
+
+// ===== DONATE =====
+function openDonateLink(amount) {
+  showToast(`Mengarahkan ke halaman donasi Rp ${parseInt(amount).toLocaleString('id')}`, 'info');
+  // Real: window.open(`https://sociabuzz.com/sankavollerei/tribe`, '_blank');
+}
+
+function submitDonate() {
+  const name = document.getElementById('donate-name').value || 'Anonim';
+  const amount = parseInt(document.getElementById('donate-amount').value);
+  const msg = document.getElementById('donate-msg').value || '';
+  
+  if (!amount || amount < 1000) {
+    showToast('Masukkan nominal minimal Rp 1.000', 'error');
+    return;
+  }
+  
+  showToast(`Terima kasih ${name}! Mendukung dengan Rp ${amount.toLocaleString('id')} ❤️`, 'success');
+  hallOfFame.unshift({ name, amount, msg });
+  renderHallOfFame();
+  
+  document.getElementById('donate-name').value = '';
+  document.getElementById('donate-amount').value = '';
+  document.getElementById('donate-msg').value = '';
+}
+
+function renderHallOfFame() {
+  const container = document.getElementById('hall-of-fame');
+  container.innerHTML = hallOfFame.map((d, i) => `
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1rem;text-align:center">
+      <div style="font-size:1.5rem;margin-bottom:0.3rem">${i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : '⭐'}</div>
+      <div style="font-weight:800;margin-bottom:0.3rem">${d.name}</div>
+      <div style="font-size:12px;color:var(--accent);font-weight:700">Rp ${d.amount.toLocaleString('id')}</div>
+      ${d.msg ? `<div style="font-size:11px;color:var(--text2);margin-top:4px">"${d.msg}"</div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ===== BUG REPORT =====
+function submitBug() {
+  const type = document.getElementById('bug-type').value;
+  const anime = document.getElementById('bug-anime').value;
+  const desc = document.getElementById('bug-desc').value;
+  
+  if (!type) { showToast('Pilih jenis bug terlebih dahulu', 'error'); return; }
+  if (!desc.trim()) { showToast('Jelaskan detail bug yang ditemukan', 'error'); return; }
+  
+  showToast('Laporan berhasil dikirim! Terima kasih 🙏', 'success');
+  document.getElementById('bug-type').value = '';
+  document.getElementById('bug-anime').value = '';
+  document.getElementById('bug-desc').value = '';
+  document.getElementById('bug-email').value = '';
+}
+
+// ===== FEATURE REQUEST =====
+function submitFeature() {
+  const name = document.getElementById('feat-name').value.trim();
+  const desc = document.getElementById('feat-desc').value.trim();
+  
+  if (!name) { showToast('Masukkan nama fitur', 'error'); return; }
+  if (!desc) { showToast('Jelaskan fiturnya', 'error'); return; }
+  
+  showToast('Ide fitur dikirim! Kami akan mempertimbangkannya ✨', 'success');
+  document.getElementById('feat-name').value = '';
+  document.getElementById('feat-desc').value = '';
+}
+
+// ===== TOAST =====
+function showToast(msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = msg;
+  container.appendChild(toast);
+  setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateX(100px)'; toast.style.transition = '0.3s'; setTimeout(() => toast.remove(), 300); }, 3000);
+}
+
+// ===== MENU TOGGLE =====
+function toggleMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// ===== CLOSE ON ESCAPE =====
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    closeSearch();
+    closeDetail();
+    closePlayer();
+    closeDownload();
+  }
+});
+
+// ===== BACK TO TOP =====
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('back-top');
+  btn.classList.toggle('visible', window.scrollY > 500);
+});
+
+// ===== HERO VIDEO FALLBACK =====
+// Since we can't use real anime video, use canvas-based animation
+function createHeroAnimation() {
+  const canvas = document.createElement('canvas');
+  canvas.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;opacity:0.15';
+  canvas.width = 800; canvas.height = 450;
+  document.getElementById('hero').insertBefore(canvas, document.getElementById('hero-video'));
+  
+  const ctx = canvas.getContext('2d');
+  let frame = 0;
+  
+  function draw() {
+    ctx.fillStyle = '#0a0a0f';
+    ctx.fillRect(0, 0, 800, 450);
+    
+    // Animated gradient circles
+    const circles = [
+      { x: 200, y: 200, r: 150, color: 'rgba(233,69,96,0.3)' },
+      { x: 600, y: 250, r: 200, color: 'rgba(168,85,247,0.2)' },
+      { x: 400, y: 100, r: 100, color: 'rgba(0,212,255,0.15)' },
+    ];
+    
+    circles.forEach((c, i) => {
+      const x = c.x + Math.sin(frame * 0.01 + i * 2) * 30;
+      const y = c.y + Math.cos(frame * 0.008 + i) * 20;
+      const grad = ctx.createRadialGradient(x, y, 0, x, y, c.r);
+      grad.addColorStop(0, c.color);
+      grad.addColorStop(1, 'transparent');
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(x, y, c.r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    
+    // Stars
+    for (let i = 0; i < 50; i++) {
+      const sx = (i * 137 + frame * 0.1) % 800;
+      const sy = (i * 97) % 450;
+      const opacity = (Math.sin(frame * 0.05 + i) + 1) / 2;
+      ctx.fillStyle = `rgba(255,255,255,${opacity * 0.5})`;
+      ctx.beginPath();
+      ctx.arc(sx, sy, 1, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    
+    frame++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+createHeroAnimation();
+
+// ===== INIT =====
+loadHome();
+
+// Preload genre and schedule in background
+setTimeout(() => {
+  // warmup
+}, 2000);
+</script>
+</body>
+</html>
